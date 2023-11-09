@@ -13,16 +13,39 @@ typedef struct
 
 typedef struct 
 {
+    float *timestamp;
+    int *PID;
+    float *Data;
+    int Data_Length;
+} DATA2;
+
+typedef struct 
+{
     float timestamp;
     int PID;
     int Data;
 }   tmp_data;
 
+typedef struct 
+{
+    float timestamp;
+    int PID;
+    float Data;
+}   tmp_data_1;
+
 int main() {
-    int n = 10000;
+    int n = 1969;
 
     DATA1 Engine_Speed;
-    Engine_Speed.Data_Length = n/4;
+    DATA1 Vehicle_Speed;
+    DATA1 ECT;
+    DATA2 Fuel_Percent;
+    
+    //we need to look through the text document and count how many of each DTC identifier there is 
+    int PID_Sort;
+    
+    
+    
     Engine_Speed.timestamp = (float *) calloc(Engine_Speed.Data_Length, sizeof(float));
     Engine_Speed.PID = (int *) calloc(Engine_Speed.Data_Length, sizeof(int)); // raster scan      
     Engine_Speed.Data = (int *) calloc(Engine_Speed.Data_Length, sizeof(int));
@@ -30,8 +53,7 @@ int main() {
     if (Engine_Speed.PID == NULL) {printf("error");}
     if (Engine_Speed.Data == NULL) {printf("error");}
 
-    DATA1 Vehicle_Speed;
-    Vehicle_Speed.Data_Length = n/4;
+
     Vehicle_Speed.timestamp = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
     Vehicle_Speed.PID = (int *) calloc(Vehicle_Speed.Data_Length, sizeof(int)); // raster scan      
     Vehicle_Speed.Data = (int *) calloc(Vehicle_Speed.Data_Length, sizeof(int));
@@ -39,8 +61,7 @@ int main() {
     if (Vehicle_Speed.PID == NULL) {printf("error");}
     if (Vehicle_Speed.Data == NULL) {printf("error");}
 
-    DATA1 ECT;
-    ECT.Data_Length = n/4;
+
     ECT.timestamp = (float *) calloc(ECT.Data_Length, sizeof(float));
     ECT.PID = (int *) calloc(ECT.Data_Length, sizeof(int)); // raster scan      
     ECT.Data = (int *) calloc(ECT.Data_Length, sizeof(int));
@@ -48,16 +69,18 @@ int main() {
     if (ECT.PID == NULL) {printf("error");}
     if (ECT.Data == NULL) {printf("error");}
 
-    DATA1 Fuel_Percent;
+
     Fuel_Percent.Data_Length = n/4;
     Fuel_Percent.timestamp = (float *) calloc(Fuel_Percent.Data_Length, sizeof(float));
     Fuel_Percent.PID = (int *) calloc(Fuel_Percent.Data_Length, sizeof(int)); // raster scan      
-    Fuel_Percent.Data = (int *) calloc(Fuel_Percent.Data_Length, sizeof(int));
+    Fuel_Percent.Data = (float *) calloc(Fuel_Percent.Data_Length, sizeof(float));
     if (Fuel_Percent.timestamp == NULL) {printf("error");}
     if (Fuel_Percent.PID == NULL) {printf("error");}
     if (Fuel_Percent.Data == NULL) {printf("error");}
+    
 
     tmp_data TEMP_DATA_Input;
+    tmp_data_1 TEMP_DATA_Input_1;
   
 
     const char* filename = "data.txt";  // Change this to your file name
@@ -70,6 +93,8 @@ int main() {
     }
     
     int count = 0;
+    
+
 
     while (file >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
         // Assuming your struct has a public array and you want to store each entry
