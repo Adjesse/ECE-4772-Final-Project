@@ -22,7 +22,7 @@ int main() {
     int n = 10000;
 
     DATA1 Engine_Speed;
-    Engine_Speed.Data_Length = n;
+    Engine_Speed.Data_Length = n/4;
     Engine_Speed.timestamp = (float *) calloc(Engine_Speed.Data_Length, sizeof(float));
     Engine_Speed.PID = (int *) calloc(Engine_Speed.Data_Length, sizeof(int)); // raster scan      
     Engine_Speed.Data = (int *) calloc(Engine_Speed.Data_Length, sizeof(int));
@@ -31,7 +31,7 @@ int main() {
     if (Engine_Speed.Data == NULL) {printf("error");}
 
     DATA1 Vehicle_Speed;
-    Engine_Speed.Data_Length = n;
+    Vehicle_Speed.Data_Length = n/4;
     Vehicle_Speed.timestamp = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
     Vehicle_Speed.PID = (int *) calloc(Vehicle_Speed.Data_Length, sizeof(int)); // raster scan      
     Vehicle_Speed.Data = (int *) calloc(Vehicle_Speed.Data_Length, sizeof(int));
@@ -39,7 +39,25 @@ int main() {
     if (Vehicle_Speed.PID == NULL) {printf("error");}
     if (Vehicle_Speed.Data == NULL) {printf("error");}
 
-    tmp_data TEMP_DATA_Engine_Speed;
+    DATA1 ECT;
+    ECT.Data_Length = n/4;
+    ECT.timestamp = (float *) calloc(ECT.Data_Length, sizeof(float));
+    ECT.PID = (int *) calloc(ECT.Data_Length, sizeof(int)); // raster scan      
+    ECT.Data = (int *) calloc(ECT.Data_Length, sizeof(int));
+    if (ECT.timestamp == NULL) {printf("error");}
+    if (ECT.PID == NULL) {printf("error");}
+    if (ECT.Data == NULL) {printf("error");}
+
+    DATA1 Fuel_Percent;
+    Fuel_Percent.Data_Length = n/4;
+    Fuel_Percent.timestamp = (float *) calloc(Fuel_Percent.Data_Length, sizeof(float));
+    Fuel_Percent.PID = (int *) calloc(Fuel_Percent.Data_Length, sizeof(int)); // raster scan      
+    Fuel_Percent.Data = (int *) calloc(Fuel_Percent.Data_Length, sizeof(int));
+    if (Fuel_Percent.timestamp == NULL) {printf("error");}
+    if (Fuel_Percent.PID == NULL) {printf("error");}
+    if (Fuel_Percent.Data == NULL) {printf("error");}
+
+    tmp_data TEMP_DATA_Input;
   
 
     const char* filename = "data.txt";  // Change this to your file name
@@ -47,28 +65,58 @@ int main() {
     ifstream file(filename);
 
     if (!file.is_open()) {
-        cerr << "Error opening file." << endl;
+        cout << "Error opening file." << endl;
         return 1;
     }
     
     int count = 0;
 
-    while (file >> TEMP_DATA_Engine_Speed.timestamp >> TEMP_DATA_Engine_Speed.PID >> TEMP_DATA_Engine_Speed.Data) {
+    while (file >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
         // Assuming your struct has a public array and you want to store each entry
-        Engine_Speed.timestamp[count] = TEMP_DATA_Engine_Speed.timestamp;
-        Engine_Speed.PID[count] = TEMP_DATA_Engine_Speed.PID;
-        Engine_Speed.Data[count] = TEMP_DATA_Engine_Speed.Data;
+
+        if (TEMP_DATA_Input.PID == 12)
+        {
+        Engine_Speed.timestamp[count] = TEMP_DATA_Input.timestamp;
+        Engine_Speed.PID[count] = TEMP_DATA_Input.PID;
+        Engine_Speed.Data[count] = TEMP_DATA_Input.Data;
+        }
+
+        else if (TEMP_DATA_Input.PID == 13)
+        {
+        Vehicle_Speed.timestamp[count] = TEMP_DATA_Input.timestamp;
+        Vehicle_Speed.PID[count] = TEMP_DATA_Input.PID;
+        Vehicle_Speed.Data[count] = TEMP_DATA_Input.Data;
+        }
+        
+        else if (TEMP_DATA_Input.PID == 103)
+        {
+        ECT.timestamp[count] = TEMP_DATA_Input.timestamp;
+        ECT.PID[count] = TEMP_DATA_Input.PID;
+        ECT.Data[count] = TEMP_DATA_Input.Data;
+        }
+
+        else if (TEMP_DATA_Input.PID == 47)
+        {
+        Fuel_Percent.timestamp[count] = TEMP_DATA_Input.timestamp;
+        Fuel_Percent.PID[count] = TEMP_DATA_Input.PID;
+        Fuel_Percent.Data[count] = TEMP_DATA_Input.Data;
+        }
+        
+        else
+        {
+            cout << "Broken Phython Script" << endl;
+        }
 
         // Increment count to move to the next index in your array
         count++;
 
         // You may want to check if count exceeds the array size to avoid overflow
-        if (count >= Engine_Speed.Data_Length) {
-            cerr << "Array size exceeded. Increase the size or handle accordingly." << endl;
+        if (count >= n) {
+            cout << "Size exceeded. More entries than parameter n. Increase the size or handle accordingly." << endl;
             break;
         }
     }
-
+    
     file.close();
 
     // Now Engine_Speed contains your data
