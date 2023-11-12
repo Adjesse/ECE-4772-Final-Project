@@ -2,7 +2,14 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sys/time.h>
 
+
+class data
+{
+
+
+};
 typedef struct 
 {
     float *timestamp;
@@ -19,7 +26,34 @@ typedef struct
     float Data;
 }   tmp_data;
 
-
+int findMax(float *timestamp , float *data, int datalength)
+{
+    float index_of_max = 0;
+    float max = data[0];
+    for(int i = 0; i < datalength; i++)
+    {
+        if(data[i] > max)
+        {   
+            max = data[i];
+            index_of_max = i;
+        }       
+    }  
+    return index_of_max;
+}
+int findMin(float *timestamp , float *data, int datalength)
+{
+    float index_of_min = 0;
+    float min = data[0];
+    for(int i = 0; i < datalength; i++)
+    {
+        if(data[i] < min)
+        {   
+            min = data[i];
+            index_of_min = i;
+        }       
+    }  
+    return index_of_min;
+}
 int main() {
     int n = 1969;
 
@@ -27,6 +61,9 @@ int main() {
     DATA1 Vehicle_Speed;
     DATA1 ECT;
     DATA1 Fuel_Percent;
+
+    struct timeval start, end;
+    long t_us;
     
     //we need to look through the text document and count how many of each DTC identifier there is 
 
@@ -200,23 +237,41 @@ int main() {
     file1.close();
 
     // Now Engine_Speed contains your data
+    gettimeofday (&start, NULL);
+    int engine_speed_max_index = findMax(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
+    int vehicle_speed_max_index = findMax(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
+    int fuel_percent_max_index = findMax(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    gettimeofday (&end, NULL);
+
+    cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 
+    << "s" << endl;
+    cout << "Max Vehicle Speed: " << Vehicle_Speed.Data[vehicle_speed_max_index] << "kph at " << Vehicle_Speed.timestamp[vehicle_speed_max_index]
+    << "s" << endl;
+    cout << "Max Fuel Percentage: " << Fuel_Percent.Data[fuel_percent_max_index] << "\% at " << Fuel_Percent.timestamp[fuel_percent_max_index] 
+    << "s" << endl;
+
+    printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
+    printf ("end: %ld us\n", end.tv_usec);    // end.tv_sec; 
+    t_us = (end.tv_sec - start.tv_sec)*1000000 + end.tv_usec - start.tv_usec; // for ms: define t_ms as double and divide by 1000.0
+     // gettimeofday: returns current time. So, when the secs increment, the us resets to 0.
+    printf ("Elapsed time: %ld us\n", t_us);
 
     //Do something with the data, like printing it for verification
-    for (int i = 0; i < Engine_Speed.Data_Length; i++) {
-       cout << "Timestamp: " << Engine_Speed.timestamp[i] << ", Identifier: " << Engine_Speed.PID[i]  << ", Data: " << Engine_Speed.Data[i]  << endl;
-    }
+    // for (int i = 0; i < Engine_Speed.Data_Length; i++) {
+    //    cout << "Timestamp: " << Engine_Speed.timestamp[i] << ", Identifier: " << Engine_Speed.PID[i]  << ", Data: " << Engine_Speed.Data[i]  << endl;
+    // }
 
-    for (int i = 0; i < Vehicle_Speed.Data_Length; i++) {
-       cout << "Timestamp: " << Vehicle_Speed.timestamp[i] << ", Identifier: " << Vehicle_Speed.PID[i]  << ", Data: " << Vehicle_Speed.Data[i]  << endl;
-    }
+    // for (int i = 0; i < Vehicle_Speed.Data_Length; i++) {
+    //    cout << "Timestamp: " << Vehicle_Speed.timestamp[i] << ", Identifier: " << Vehicle_Speed.PID[i]  << ", Data: " << Vehicle_Speed.Data[i]  << endl;
+    // }
 
-    for (int i = 0; i < ECT.Data_Length; i++) {
-       cout << "Timestamp: " << ECT.timestamp[i] << ", Identifier: " << ECT.PID[i]  << ", Data: " << ECT.Data[i]  << endl;
-    }
+    // for (int i = 0; i < ECT.Data_Length; i++) {
+    //    cout << "Timestamp: " << ECT.timestamp[i] << ", Identifier: " << ECT.PID[i]  << ", Data: " << ECT.Data[i]  << endl;
+    // }
 
-    for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
-       cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
-    }
+    // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
+    //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
+    // }
 
     return 0;
 }
