@@ -61,6 +61,7 @@ int main() {
     DATA1 Vehicle_Speed;
     DATA1 ECT;
     DATA1 Fuel_Percent;
+    DATA1 Distance_Since_Clear;
 
     struct timeval start, end;
     long t_us;
@@ -84,10 +85,14 @@ int main() {
     int count2 = 0;
     int count3 = 0;
     int count4 = 0;
+    int count5 = 0;
     Engine_Speed.Data_Length = 0;
     Vehicle_Speed.Data_Length = 0;
     ECT.Data_Length = 0;
     Fuel_Percent.Data_Length = 0;
+    Distance_Since_Clear.Data_Length = 0;
+
+
 
 
     while (file >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
@@ -103,7 +108,7 @@ int main() {
         Vehicle_Speed.Data_Length ++;
         }
         
-        else if (TEMP_DATA_Input.PID == 103)
+        else if (TEMP_DATA_Input.PID == 5)
         {
         ECT.Data_Length ++;
         }
@@ -111,6 +116,11 @@ int main() {
         else if (TEMP_DATA_Input.PID == 47)
         {
         Fuel_Percent.Data_Length ++;
+        }
+
+        else if (TEMP_DATA_Input.PID == 49)
+        {
+        Distance_Since_Clear.Data_Length ++;
         }
         
         else
@@ -134,6 +144,7 @@ int main() {
     cout << Vehicle_Speed.Data_Length << endl;
     cout << ECT.Data_Length << endl;
     cout << Fuel_Percent.Data_Length << endl;
+    cout << Distance_Since_Clear.Data_Length << endl;
     cout << count << endl;
 
     
@@ -169,6 +180,14 @@ int main() {
     if (Fuel_Percent.timestamp == NULL) {printf("error");}
     if (Fuel_Percent.PID == NULL) {printf("error");}
     if (Fuel_Percent.Data == NULL) {printf("error");}
+
+
+    Distance_Since_Clear.timestamp = (float *) calloc(Distance_Since_Clear.Data_Length, sizeof(float));
+    Distance_Since_Clear.PID = (int *) calloc(Distance_Since_Clear.Data_Length, sizeof(int)); // raster scan      
+    Distance_Since_Clear.Data = (float *) calloc(Distance_Since_Clear.Data_Length, sizeof(float));
+    if (Distance_Since_Clear.timestamp == NULL) {printf("error");}
+    if (Distance_Since_Clear.PID == NULL) {printf("error");}
+    if (Distance_Since_Clear.Data == NULL) {printf("error");}
     
   
     count = 0;
@@ -203,7 +222,7 @@ int main() {
         count2 ++;
         }
         
-        else if (TEMP_DATA_Input.PID == 103)
+        else if (TEMP_DATA_Input.PID == 05)
         {
         ECT.timestamp[count3] = TEMP_DATA_Input.timestamp;
         ECT.PID[count3] = TEMP_DATA_Input.PID;
@@ -217,6 +236,14 @@ int main() {
         Fuel_Percent.PID[count4] = TEMP_DATA_Input.PID;
         Fuel_Percent.Data[count4] = TEMP_DATA_Input.Data;
         count4 ++;
+        }
+
+         else if (TEMP_DATA_Input.PID == 49)
+        {
+        Distance_Since_Clear.timestamp[count5] = TEMP_DATA_Input.timestamp;
+        Distance_Since_Clear.PID[count5] = TEMP_DATA_Input.PID;
+        Distance_Since_Clear.Data[count5] = TEMP_DATA_Input.Data;
+        count5 ++;
         }
         
         else
@@ -241,6 +268,8 @@ int main() {
     int engine_speed_max_index = findMax(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
     int vehicle_speed_max_index = findMax(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
     int fuel_percent_max_index = findMax(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    int ECT_max_index = findMax(ECT.timestamp,ECT.Data,ECT.Data_Length);
+    int Distance_Since_Clear_max_index = findMax(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
     gettimeofday (&end, NULL);
 
     cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 
@@ -248,6 +277,10 @@ int main() {
     cout << "Max Vehicle Speed: " << Vehicle_Speed.Data[vehicle_speed_max_index] << "kph at " << Vehicle_Speed.timestamp[vehicle_speed_max_index]
     << "s" << endl;
     cout << "Max Fuel Percentage: " << Fuel_Percent.Data[fuel_percent_max_index] << "\% at " << Fuel_Percent.timestamp[fuel_percent_max_index] 
+    << "s" << endl;
+    cout << "Max ECT: " << ECT.Data[ECT_max_index] << "\% at " << ECT.timestamp[ECT_max_index] 
+    << "s" << endl;
+    cout << "Max Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_max_index] << "\% at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_max_index] 
     << "s" << endl;
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
