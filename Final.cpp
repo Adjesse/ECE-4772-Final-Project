@@ -55,7 +55,7 @@ int findMin(float *timestamp , float *data, int datalength)
     return index_of_min;
 }
 int main() {
-    int n = 1969;
+    int n = 305000;
 
     DATA1 Engine_Speed;
     DATA1 Vehicle_Speed;
@@ -278,9 +278,9 @@ int main() {
     << "s" << endl;
     cout << "Max Fuel Percentage: " << Fuel_Percent.Data[fuel_percent_max_index] << "\% at " << Fuel_Percent.timestamp[fuel_percent_max_index] 
     << "s" << endl;
-    cout << "Max ECT: " << ECT.Data[ECT_max_index] << "\% at " << ECT.timestamp[ECT_max_index] 
+    cout << "Max ECT: " << ECT.Data[ECT_max_index] << "Degrees Celcius at " << ECT.timestamp[ECT_max_index] 
     << "s" << endl;
-    cout << "Max Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_max_index] << "\% at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_max_index] 
+    cout << "Max Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_max_index] << "km at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_max_index] 
     << "s" << endl;
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
