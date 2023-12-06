@@ -265,11 +265,19 @@ int main() {
 
     // Now Engine_Speed contains your data
     gettimeofday (&start, NULL);
+    //Max Values
     int engine_speed_max_index = findMax(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
     int vehicle_speed_max_index = findMax(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
     int fuel_percent_max_index = findMax(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
     int ECT_max_index = findMax(ECT.timestamp,ECT.Data,ECT.Data_Length);
     int Distance_Since_Clear_max_index = findMax(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
+    
+    //Min Values
+    int engine_speed_min_index = findMin(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
+    int vehicle_speed_min_index = findMin(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
+    int fuel_percent_min_index = findMin(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    int ECT_min_index = findMin(ECT.timestamp,ECT.Data,ECT.Data_Length);
+    int Distance_Since_Clear_min_index = findMin(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
     gettimeofday (&end, NULL);
 
     cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 
@@ -283,6 +291,18 @@ int main() {
     cout << "Max Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_max_index] << "km at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_max_index] 
     << "s" << endl;
 
+    cout << "Min Engine Speed: " << Engine_Speed.Data[engine_speed_min_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_min_index] 
+    << "s" << endl;
+    cout << "Min Vehicle Speed: " << Vehicle_Speed.Data[vehicle_speed_min_index] << "kph at " << Vehicle_Speed.timestamp[vehicle_speed_min_index]
+    << "s" << endl;
+    cout << "Min Fuel Percentage: " << Fuel_Percent.Data[fuel_percent_min_index] << "\% at " << Fuel_Percent.timestamp[fuel_percent_min_index] 
+    << "s" << endl;
+    cout << "Min ECT: " << ECT.Data[ECT_min_index] << "Degrees Celcius at " << ECT.timestamp[ECT_min_index] 
+    << "s" << endl;
+    cout << "Min Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_min_index] << "km at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_min_index] 
+    << "s" << endl;
+
+    
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
     printf ("end: %ld us\n", end.tv_usec);    // end.tv_sec; 
     t_us = (end.tv_sec - start.tv_sec)*1000000 + end.tv_usec - start.tv_usec; // for ms: define t_ms as double and divide by 1000.0
