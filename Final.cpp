@@ -4,7 +4,7 @@ using namespace std;
 #include <string>
 #include <sys/time.h>
 
-//Trey is gay
+
 class data
 {
 
