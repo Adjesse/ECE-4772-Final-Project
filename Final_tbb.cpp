@@ -2,10 +2,12 @@
 #include <fstream>
 #include <string>
 #include <sys/time.h>
-#include <tbb/tbb.h>
+//#include <tbb/tbb.h>
+#include "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include/tbb/tbb.h"
+
 
 using namespace std; 
-
+using namespace tbb;
 
 
 class Max {
@@ -373,11 +375,7 @@ int main() {
     
 
     gettimeofday (&end, NULL);
-    for(int i = 0; i < number_of_rows; ++i)
-    {
-        free(A[i]);
-    }
-    free(A);
+    
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
     int ECT_max_index = max[2];
@@ -476,7 +474,11 @@ int main() {
     // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
     //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
     // }
-    
+    for(int i = 0; i < number_of_rows; ++i)
+    {
+        free(A[i]);
+    }
+    free(A);
 
     return 0;
 }

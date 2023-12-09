@@ -2,7 +2,7 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: gcc.exe build active file",
+            "label": "C/C++: gcc.exe build active file with TBB",
             "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
@@ -10,8 +10,10 @@
                 "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-I C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include",
-                "-L C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/lib",
+                "-I",
+                "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include",
+                "-L",
+                "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/lib",
                 "-ltbb"
             ],
             "options": {
