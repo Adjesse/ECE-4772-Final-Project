@@ -1,10 +1,11 @@
-using namespace std; 
-using namespace tbb;
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sys/time.h>
 #include <tbb/tbb.h>
+
+using namespace std; 
+
 
 
 class Max {
@@ -16,7 +17,7 @@ public:
  void operator() (const blocked_range<size_t> &r) {
  float *a = my_a;
  float max = my_max;
- int index = 0; 
+ int index = my_index; 
  // Get the maximum for a portion of the vector:
  for (size_t i = r.begin(); i!= r.end(); i++) 
     { 
@@ -46,7 +47,7 @@ public:
  void operator() (const blocked_range<size_t> &r) {
  float *a = my_a;
  float min = my_min;
- int index = 0;
+ int index = my_index;
  // Get the minimum for a portion of the vector:
  for (size_t i = r.begin(); i!= r.end(); i++) 
     { 
@@ -340,7 +341,7 @@ int main() {
 
     for(int i = 0; i < number_of_rows; ++i)
     {
-        A[i] = (float*)calloc(5,sizeof(float));
+        A[i] = (float*)calloc(number_of_cols,sizeof(float));
     }
 
     A[0] = Engine_Speed.Data;
@@ -379,8 +380,8 @@ int main() {
     free(A);
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
-    int fuel_percent_max_index = max[2];
-    int ECT_max_index = max[3];
+    int ECT_max_index = max[2];
+    int fuel_percent_max_index = max[3];
     int Distance_Since_Clear_max_index = max[4];
     cout << "----------------------Max Values-----------------------------" << endl;
     cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 
@@ -396,8 +397,8 @@ int main() {
     cout << "-------------------------------------------------------------" << endl;
     int engine_speed_min_index = min[0];
     int vehicle_speed_min_index = min[1];
-    int fuel_percent_min_index = min[2];
-    int ECT_min_index = min[3];
+    int ECT_min_index = min[2];
+    int fuel_percent_min_index = min[3];
     int Distance_Since_Clear_min_index = min[4];
     cout << "----------------------Min Values-----------------------------" << endl;
     cout << "Min Engine Speed: " << Engine_Speed.Data[engine_speed_min_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_min_index] 

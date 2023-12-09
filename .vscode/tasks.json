@@ -9,7 +9,10 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include",
+                "-L C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/lib",
+                "-ltbb"
             ],
             "options": {
                 "cwd": "${fileDirname}"
