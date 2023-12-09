@@ -54,11 +54,38 @@ int findMin(float *timestamp , float *data, int datalength)
     }  
     return index_of_min;
 }
+
+
+void CreateHistogram(float *INPUT_DATA, int OUTPUT_DATA[], int bin_size, int data_length)
+{
+for (int i = 0; i < data_length; i++)
+    {
+        OUTPUT_DATA[(((int)INPUT_DATA[i])/bin_size)] = OUTPUT_DATA[(((int)INPUT_DATA[i])/bin_size)] + 1;
+    } 
+}
+
+
+
 int main() {
     int n = 305000;
-
+    
     DATA1 Engine_Speed;
+    int histogram_engine_speed_binsize = 500;
+    int histogram_engine_speed[8000/histogram_engine_speed_binsize]; 
+    for(int i = 0; i <8000/histogram_engine_speed_binsize; i++)
+    {
+        histogram_engine_speed[i] = 0;
+    }
+
     DATA1 Vehicle_Speed;
+    int histogram_vehicle_speed_binsize = 10;
+    int histogram_vehicle_speed[160/histogram_vehicle_speed_binsize]; 
+    for(int i = 0; i <160/histogram_vehicle_speed_binsize; i++)
+    {
+        histogram_vehicle_speed[i] = 0;
+    }
+
+
     DATA1 ECT;
     DATA1 Fuel_Percent;
     DATA1 Distance_Since_Clear;
@@ -263,6 +290,8 @@ int main() {
     
     file1.close();
 
+
+
     // Now Engine_Speed contains your data
     gettimeofday (&start, NULL);
     //Max Values
@@ -278,6 +307,16 @@ int main() {
     int fuel_percent_min_index = findMin(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
     int ECT_min_index = findMin(ECT.timestamp,ECT.Data,ECT.Data_Length);
     int Distance_Since_Clear_min_index = findMin(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
+
+
+    //Now let's get the histogram for engine speed
+    //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
+    //therefoe the bin_size = 500
+    CreateHistogram(Engine_Speed.Data, histogram_engine_speed, histogram_engine_speed_binsize, Engine_Speed.Data_Length);
+    
+    //Now let's get the histogram for vehicle speed
+    CreateHistogram(Vehicle_Speed.Data, histogram_vehicle_speed, histogram_vehicle_speed_binsize, Vehicle_Speed.Data_Length);
+
     gettimeofday (&end, NULL);
 
     cout << "----------------------Max Values-----------------------------" << endl;
@@ -303,6 +342,23 @@ int main() {
     << "s" << endl;
     cout << "Min Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_min_index] << "km at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_min_index] 
     << "s" << endl;
+    cout << "-------------------------------------------------------------" << endl;
+    
+    cout << "----------------------Engine Speed Histogram Values-----------------------------" << endl;
+    cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << histogram_engine_speed_binsize << endl;
+    for (int i = 0; i < 8000/histogram_engine_speed_binsize; i++)
+    {
+    cout << "Bin Number: " << i << "   Range: " << i*histogram_engine_speed_binsize << "  -  " << (i*histogram_engine_speed_binsize) + histogram_engine_speed_binsize << "   Value:  " << histogram_engine_speed[i] << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
+
+
+    cout << "----------------------Vehicle Speed Histogram Values-----------------------------" << endl;
+    cout << "Engine Speed Histogram (Range 0-160 km/hr): Bin Size " << histogram_vehicle_speed_binsize << endl;
+    for (int i = 0; i < 160/histogram_vehicle_speed_binsize; i++)
+    {
+    cout << "Bin Number: " << i << "   Range: " << i*histogram_vehicle_speed_binsize << "  -  " << (i*histogram_vehicle_speed_binsize) + histogram_vehicle_speed_binsize << "   Value:  " << histogram_vehicle_speed[i] << endl;
+    }
     cout << "-------------------------------------------------------------" << endl;
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
