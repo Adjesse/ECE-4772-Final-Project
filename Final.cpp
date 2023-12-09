@@ -67,6 +67,12 @@ for (int i = 0; i < data_length; i++)
 
 
 int main() {
+
+    FILE *file_o1;
+    FILE *file_o2;
+    char *out_file1 = "engine_speed_histogram.bof";
+    char *out_file2 = "vehicle_speed_histogram.bof";
+
     int n = 305000;
     
     DATA1 Engine_Speed;
@@ -360,6 +366,30 @@ int main() {
     cout << "Bin Number: " << i << "   Range: " << i*histogram_vehicle_speed_binsize << "  -  " << (i*histogram_vehicle_speed_binsize) + histogram_vehicle_speed_binsize << "   Value:  " << histogram_vehicle_speed[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
+
+
+    size_t result;
+    //write Engine Speed Histogram to .bof file
+    //*************************************
+    file_o1 = fopen (out_file1,"wb");
+       if (file_o1 == NULL) return -1;// check that the file was actually opened
+       
+       result = fwrite (histogram_engine_speed, sizeof(int), 8000/histogram_engine_speed_binsize, file_o1); // each element (pixel) is of size int (4 bytes)
+                   
+       printf ("Output binary file (engine speed): # of elements written = %d\n", result); // Total # of elements successfully read
+       fclose (file_o1);
+
+
+    //write Vehicle Speed Histogram to .bof file
+    //*************************************
+    file_o2 = fopen (out_file2,"wb");
+       if (file_o2 == NULL) return -1;// check that the file was actually opened
+       
+       result = fwrite (histogram_vehicle_speed, sizeof(int), 160/histogram_vehicle_speed_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
+                   
+       printf ("Output binary file (vehicle): # of elements written = %d\n", result); // Total # of elements successfully read
+       fclose (file_o2);		
+
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
     printf ("end: %ld us\n", end.tv_usec);    // end.tv_sec; 
