@@ -486,17 +486,18 @@ int main(int argc, char **argv) {
             cout << i << "   " << j << "   " <<   vehicle_speed_hp[i][j] << endl;
         }
     } 
+    
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
     free(engine_speed_hp);
-    for(int i = 0; i < 8000/engine_speed_h_binsize; i++)
+    for(int i = 0; i < nt; i++)
     {
         free(engine_speed_hp[i]);
     }
 
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);
     free(vehicle_speed_hp);
-    for(int i = 0; i < 160/vehicle_speed_h_binsize; i++)
+    for(int i = 0; i < nt; i++)
     {
         free(vehicle_speed_hp[i]);
     }
