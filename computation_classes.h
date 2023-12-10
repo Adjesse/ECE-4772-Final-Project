@@ -108,6 +108,23 @@ public:
         } 
     }
 };
+
+class Accumulation {
+ float * my_a; // 'private' access (default access level)
+public:
+ float my_sum;
+ void operator()( const blocked_range<size_t> &r ) {
+ float *a = my_a;
+ float sum = my_sum; // to not discard earlier accumulations
+ for ( size_t i=r.begin(); i!=r.end(); ++i )
+ sum += a[i];
+ my_sum = sum;
+ }
+ Accumulation (Accumulation &x, split): my_a(x.my_a), my_sum(0) {}
+ void join (const Accumulation &y) { my_sum += y.my_sum; }
+ Accumulation (float *a): my_a(a), my_sum(0) {} // member initialization in constructor
+};
+
 float getmax_tbb (float *a, size_t L)
 { 
     Max max(a);
@@ -140,5 +157,11 @@ int *getsum_tbb (int **ai, int nt, int bin_size, int max_value)
  parallel_reduce (blocked_range<int>(0,nt), pf);
  return pf.my_sum;
 }
+
+float accumulation_tbb( float *a, size_t n ) {
+ Accumulation sum(a);
+ parallel_reduce(blocked_range<size_t>(0,n), sum );
+ return sum.my_sum; }
+
 
 #endif // COMPUTATION_CLASSES_H

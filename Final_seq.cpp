@@ -56,6 +56,17 @@ int findMin(float *timestamp , float *data, int datalength)
     return index_of_min;
 }
 
+float findAvg(float *data, int datalength)
+{   
+    float sum = 0;
+    float avg = 0; 
+    for(int i = 0; i < datalength; i++)
+    {
+        sum = sum + data[i];
+    }
+    avg = sum / datalength;
+    return avg;
+}
 
 void CreateHistogram(float *INPUT_DATA, int OUTPUT_DATA[], int bin_size, int data_length)
 {
@@ -314,7 +325,13 @@ int main() {
     int fuel_percent_min_index = findMin(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
     int ECT_min_index = findMin(ECT.timestamp,ECT.Data,ECT.Data_Length);
     int Distance_Since_Clear_min_index = findMin(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
-
+    
+    //AVG Values
+    float engine_speed_avg = findAvg(Engine_Speed.Data,Engine_Speed.Data_Length);
+    float vehicle_speed_avg = findAvg(Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
+    float fuel_percent_avg = findAvg(Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    float ECT_avg = findAvg(ECT.Data,ECT.Data_Length);
+    float Distance_Since_Clear_avg = findAvg(Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
 
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
@@ -351,6 +368,14 @@ int main() {
     << "s" << endl;
     cout << "-------------------------------------------------------------" << endl;
     
+    cout << "----------------------Avg Values-----------------------------" << endl;
+    cout << "Avg Engine Speed: " << engine_speed_avg << "rpm  "  << endl;
+    cout << "Avg Vehicle Speed: " << vehicle_speed_avg << "kph  " << endl;
+    cout << "Avg Fuel Percentage: " << fuel_percent_avg<< "\% " << endl;
+    cout << "Avg ECT: " << ECT_avg<< " Degrees Celsius" << endl;
+    cout << "Avg Distance Travelled: " << Distance_Since_Clear_avg << "km" << endl;
+    cout << "-------------------------------------------------------------" << endl;
+
     cout << "----------------------Engine Speed Histogram Values-----------------------------" << endl;
     cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << histogram_engine_speed_binsize << endl;
     for (int i = 0; i < 8000/histogram_engine_speed_binsize; i++)

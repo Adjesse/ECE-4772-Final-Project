@@ -254,13 +254,13 @@ int main(int argc, char **argv) {
     //Create 2-D array of data vectors 
     //int Data_set_lengths[5] = {Engine_Speed.Data_Length , Vehicle_Speed.Data_Length, ECT.Data_Length, Fuel_Percent.Data_Length, Distance_Since_Clear.Data_Length};
     int number_of_rows = 5;
-    int number_of_cols = Engine_Speed.Data_Length;
+    int number_of_cols[5] = {Engine_Speed.Data_Length, Vehicle_Speed.Data_Length, ECT.Data_Length, Fuel_Percent.Data_Length, Distance_Since_Clear.Data_Length}; 
     
     float** A = (float **) calloc(number_of_rows, sizeof(float*));
 
     for(int i = 0; i < number_of_rows; ++i)
     {
-        A[i] = (float *)calloc(number_of_cols,sizeof(float));
+        A[i] = (float *)calloc(number_of_cols[i],sizeof(float));
     }
 
     A[0] = Engine_Speed.Data;
@@ -271,6 +271,7 @@ int main(int argc, char **argv) {
     
     float max[5];
     float min[5];
+    float avg[5];
 
 
     //variable setup and dynamic variable allocation for the histograms for engine speed and vehicle speed
@@ -307,9 +308,9 @@ int main(int argc, char **argv) {
     //Max Values and Min Values
     tbb::parallel_for(int(0), int(number_of_rows*3) + (2*nt), [&] (int i)
     {   
-        if(i < 5) {max[i] = getmax_tbb(A[i] , number_of_cols);}
-        else if(i < 10) {min[i-5] = getmin_tbb(A[i-5] , number_of_cols);}
-        else if(i < 15) { }
+        if(i < 5) {max[i] = getmax_tbb(A[i] , number_of_cols[i]);}
+        else if(i < 10) {min[i-5] = getmin_tbb(A[i-5] , number_of_cols[i-5]);}
+        else if(i < 15) {avg[i-10] = ((accumulation_tbb(A[i-10] , number_of_cols[i-10]))/number_of_cols[i-10]);}
         else if(i < (15 + nt))    //for debugging nt = 4      ---> i = 15 to i = 18
         {
             engine_speed_hp[i-15] = CreatePartialHistogram (Engine_Speed.Data, (i-15), nt, Engine_Speed.Data_Length, engine_speed_h_binsize, engine_speed_h_maxvalue);
@@ -391,6 +392,14 @@ int main(int argc, char **argv) {
     << "s" << endl;
     cout << "Min Distance Travelled: " << Distance_Since_Clear.Data[Distance_Since_Clear_min_index] << "km at " << Distance_Since_Clear.timestamp[Distance_Since_Clear_min_index] 
     << "s" << endl;
+    cout << "-------------------------------------------------------------" << endl;
+   
+    cout << "----------------------Avg Values-----------------------------" << endl;
+    cout << "Avg Engine Speed: " << avg[0] << "rpm  "  << endl;
+    cout << "Avg Vehicle Speed: " << avg[1] << "kph  " << endl;
+    cout << "Avg Fuel Percentage: " << avg[3] << "\% " << endl;
+    cout << "Avg ECT: " << avg[2] << " Degrees Celsius" << endl;
+    cout << "Avg Distance Travelled: " << avg[4] << "km" << endl;
     cout << "-------------------------------------------------------------" << endl;
     
     cout << "----------------------Engine Speed Histogram Values-----------------------------" << endl;
