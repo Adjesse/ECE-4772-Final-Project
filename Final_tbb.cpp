@@ -451,13 +451,15 @@ int main(int argc, char **argv) {
         if(i < 5) {max[i] = getmax_tbb(A[i] , number_of_cols);}
         else if(i < 10) {min[i-5] = getmin_tbb(A[i-5] , number_of_cols);}
         else if(i < 15) { }
-        else if(i < (15 + nt)) 
+        else if(i < (15 + nt))    //for debugging nt = 4      ---> i = 15 to i = 18
         {
-            engine_speed_hp[i-15] = CreatePartialHistogram (Engine_Speed.Data, (i-15), nt, Engine_Speed.Data_Length, engine_speed_h_binsize, 8000);                 
+            engine_speed_hp[i-15] = CreatePartialHistogram (Engine_Speed.Data, (i-15), nt, Engine_Speed.Data_Length, engine_speed_h_binsize, 8000);
+            //engine_speed_hp[0:3] = CreatePartialHistogram (Engine_Speed.Data, 0:3, 4, 61000, 500, 8000);           
         }
-        else if(i < (15 + (2 * nt))) 
+        else if(i < (15 + (2 * nt)))      //for debugging nt = 4    ---> i = 19 to i = 22
         {       
-            vehicle_speed_hp[(i-(15+nt))] = CreatePartialHistogram (Vehicle_Speed.Data, (i-(15+nt)), nt, Vehicle_Speed.Data_Length, vehicle_speed_h_binsize, 160);     
+            vehicle_speed_hp[(i-(15+nt))] = CreatePartialHistogram (Vehicle_Speed.Data, (i-(15+nt)), nt, Vehicle_Speed.Data_Length, vehicle_speed_h_binsize, 160);
+            //vehicle_speed_hp[0:3] = CreatePartialHistogram (Vehicle_Speed.Data, 0:3, 4, 61000, 10, 160);     
         }
     });
 
