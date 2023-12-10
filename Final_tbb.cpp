@@ -15,42 +15,6 @@ using namespace tbb;
 
 
 
-
-float getmax_tbb (float *a, size_t L)
-{ 
-    Max max(a);
-    tbb::parallel_reduce (blocked_range<size_t> (0,L),max);
-    return max.my_index;
-}
-
-float getmin_tbb (float *a, size_t L)
-{ 
-    Min min(a);
-    tbb::parallel_reduce (blocked_range<size_t> (0,L),min);
-    return min.my_index;
-}
-
-
-int *CreatePartialHistogram (float *ai, int ki, int nt, int n, int bin_size, int max_value) 
-{
-int *hp = new int[max_value/bin_size]();
-
-for (int i = ki*n/nt ; i < (ki+1)*n/nt; i++) 
-    {
-    hp[(int)(ai[i])/bin_size]=hp[(int)(ai[i])/bin_size]+1; 
-    }
-return hp;  
-}
-
-int *getsum_tbb (int **ai, int nt, int bin_size, int max_value) 
-{
- SumFun pf(ai, bin_size, max_value);
- parallel_reduce (blocked_range<int>(0,nt), pf);
- return pf.my_sum;
-}
-
-
-
 int main(int argc, char **argv) {
     
     int n = 305000;
