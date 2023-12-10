@@ -95,7 +95,7 @@ public:
  }
 
  SumFun (int **a, int bin_size, int max_value): my_a(a), my_sum(new int[(max_value/bin_size)]), my_bin_size(bin_size), my_max_value(max_value) {}
- SumFun (SumFun &x, split): my_a(x.my_a), my_sum(new int[256]) {}
+ SumFun (SumFun &x, split): my_a(x.my_a), my_sum(new int[my_max_value/my_bin_size]) {}
  void join (const SumFun &y) 
  {
     for(int j = 0; j < (my_max_value/my_bin_size); ++j)
