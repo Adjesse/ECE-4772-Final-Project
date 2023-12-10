@@ -102,7 +102,7 @@ public:
      {
        my_sum[j] += y.my_sum[j]; 
      } 
-     delete[] y.my_sum;    
+       
  }
 };
 
@@ -398,11 +398,11 @@ int main(int argc, char **argv) {
     int number_of_rows = 5;
     int number_of_cols = Engine_Speed.Data_Length;
     
-    float** A = (float**) calloc(number_of_rows, sizeof(float*));
+    float** A = (float **) calloc(number_of_rows, sizeof(float*));
 
     for(int i = 0; i < number_of_rows; ++i)
     {
-        A[i] = (float*)calloc(number_of_cols,sizeof(float));
+        A[i] = (float *)calloc(number_of_cols,sizeof(float));
     }
 
     A[0] = Engine_Speed.Data;
@@ -466,7 +466,7 @@ int main(int argc, char **argv) {
         }
     });
 
-    /* cout << "Engine Speed Partial" << endl;
+    cout << "Engine Speed Partial" << endl;
 
     for(int i = 0; i < 4; i++)
     {
@@ -485,7 +485,7 @@ int main(int argc, char **argv) {
         {
             cout << i << "   " << j << "   " <<   vehicle_speed_hp[i][j] << endl;
         }
-    } */
+    } 
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
     free(engine_speed_hp);
