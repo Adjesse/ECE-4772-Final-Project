@@ -6,9 +6,10 @@
 #include "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include/tbb/tbb.h"
 
 
-using namespace std; 
+using namespace std;
+using namespace tbb; 
 
-
+//adam is gay
 
 class Max {
 public:
@@ -478,11 +479,7 @@ int main(int argc, char **argv) {
     
 
     gettimeofday (&end, NULL);
-    for(int i = 0; i < number_of_rows; ++i)
-    {
-        free(A[i]);
-    }
-    free(A);
+    
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
     int ECT_max_index = max[2];
