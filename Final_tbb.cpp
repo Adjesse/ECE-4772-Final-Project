@@ -489,19 +489,8 @@ int main(int argc, char **argv) {
     
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
-    free(engine_speed_hp);
-    for(int i = 0; i < nt; i++)
-    {
-        free(engine_speed_hp[i]);
-    }
-
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);
-    free(vehicle_speed_hp);
-    for(int i = 0; i < nt; i++)
-    {
-        free(vehicle_speed_hp[i]);
-    }
-    
+   
 
     gettimeofday (&end, NULL);
 
@@ -611,6 +600,18 @@ int main(int argc, char **argv) {
     // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
     //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
     // }
+    free(engine_speed_hp);
+    for(int i = 0; i < nt; i++)
+    {
+        free(engine_speed_hp[i]);
+    }
+
+    free(vehicle_speed_hp);
+    for(int i = 0; i < nt; i++)
+    {
+        free(vehicle_speed_hp[i]);
+    }
+
     for(int i = 0; i < number_of_rows; i++)
     {
         free(A[i]);
