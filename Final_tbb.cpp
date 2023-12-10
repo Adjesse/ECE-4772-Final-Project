@@ -127,7 +127,7 @@ int *hp = new int[max_value/bin_size];
 
 for (int i = ki*n/nt ; i < (ki+1)*n/nt; i++) 
     {
-    hp[(int)(ai[i]/bin_size)]=hp[(int)(ai[i]/bin_size)]+1; 
+    hp[(int)(ai[i])/bin_size]=hp[(int)(ai[i])/bin_size]+1; 
     }
 return hp;  
 }
