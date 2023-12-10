@@ -582,6 +582,12 @@ int main(int argc, char **argv) {
         free(A[i]);
     }
     free(A);
+    free(Engine_Speed.timestamp); free(Engine_Speed.PID); free(Engine_Speed.Data); 
+    free(Vehicle_Speed.timestamp); free(Vehicle_Speed.PID); free( Vehicle_Speed.Data);
+    free(ECT.timestamp); free(ECT.PID); free(ECT.Data);
+    free(Fuel_Percent.timestamp); free(Fuel_Percent.PID); free(Fuel_Percent.Data);   
+    free(Distance_Since_Clear.timestamp); free(Distance_Since_Clear.PID); free(Distance_Since_Clear.Data);     
+     
 
     return 0;
 }
