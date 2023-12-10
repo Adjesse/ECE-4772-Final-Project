@@ -2,14 +2,13 @@
 #include <fstream>
 #include <string>
 #include <sys/time.h>
-//#include <tbb/tbb.h>
-#include "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include/tbb/tbb.h"
+#include <tbb/tbb.h>
+//#include "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include/tbb/tbb.h"
 
 
 using namespace std;
 using namespace tbb; 
 
-//adam is gay
 
 class Max {
 public:
