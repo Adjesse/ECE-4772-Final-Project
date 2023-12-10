@@ -94,8 +94,8 @@ public:
  my_sum = sum;
  }
 
- SumFun (int **a, int bin_size, int max_value): my_a(a), my_sum(new int[(max_value/bin_size)]), my_bin_size(bin_size), my_max_value(max_value) {}
- SumFun (SumFun &x, split): my_a(x.my_a), my_sum(new int[my_max_value/my_bin_size]) {}
+ SumFun (int **a, int bin_size, int max_value): my_a(a), my_sum(new int[(max_value/bin_size)]()), my_bin_size(bin_size), my_max_value(max_value) {}
+ SumFun (SumFun &x, split): my_a(x.my_a), my_sum(new int[my_max_value/my_bin_size]()) {}
  void join (const SumFun &y) 
  {
     for(int j = 0; j < (my_max_value/my_bin_size); ++j)
@@ -123,13 +123,14 @@ float getmin_tbb (float *a, size_t L)
 
 int *CreatePartialHistogram (float *ai, int ki, int nt, int n, int bin_size, int max_value) 
 {
-int *hp = new int[max_value/bin_size];
+int *hp = new int[max_value/bin_size]();
 
 for (int i = ki*n/nt ; i < (ki+1)*n/nt; i++) 
     {
     hp[(int)(ai[i])/bin_size]=hp[(int)(ai[i])/bin_size]+1; 
     }
 return hp;  
+delete[] hp;
 }
 
 int *getsum_tbb (int **ai, int nt, int bin_size, int max_value) 
@@ -463,7 +464,7 @@ int main(int argc, char **argv) {
         }
     });
 
-    cout << "Engine Speed Partial" << endl;
+    /* cout << "Engine Speed Partial" << endl;
 
     for(int i = 0; i < 4; i++)
     {
@@ -482,7 +483,7 @@ int main(int argc, char **argv) {
         {
             cout << i << "   " << j << "   " <<   vehicle_speed_hp[i][j] << endl;
         }
-    }
+    } */
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);

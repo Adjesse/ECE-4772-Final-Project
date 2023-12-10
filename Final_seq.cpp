@@ -3,6 +3,8 @@
 #include <string>
 #include <sys/time.h>
 
+using namespace std;
+
 
 class data
 {
