@@ -4,7 +4,8 @@
 #include <sys/time.h>
 #include <tbb/tbb.h>
 
-using namespace std; 
+using namespace std;
+using namespace tbb; 
 
 
 
@@ -68,6 +69,42 @@ public:
  Min () {}
 };
 
+class SumFun {
+ int **my_a;
+ int my_bin_size;
+ int my_max_value;
+public:
+ int *my_sum;
+
+ void operator() (const blocked_range<int> &r) 
+ {
+ int **a = my_a;
+ int *sum = my_sum;
+ int bin_size = my_bin_size;
+ int max_value = my_max_value;
+
+ for (int i=r.begin(); i != r.end(); ++i)
+ {
+     for(int j = 0; j < (max_value/bin_size); ++j)
+     {
+        sum[j] += a[i][j];
+     }
+ }    
+ my_sum = sum;
+ }
+
+ SumFun (int **a, int bin_size, int max_value): my_a(a), my_sum(new int[(max_value/bin_size)]), my_bin_size(bin_size), my_max_value(max_value) {}
+ SumFun (SumFun &x, split): my_a(x.my_a), my_sum(new int[256]) {}
+ void join (const SumFun &y) 
+ {
+    for(int j = 0; j < (my_max_value/my_bin_size); ++j)
+     {
+       my_sum[j] += y.my_sum[j]; 
+     }      
+ }
+};
+
+
 float getmax_tbb (float *a, size_t L)
 { 
     Max max(a);
@@ -80,6 +117,25 @@ float getmin_tbb (float *a, size_t L)
     Min min(a);
     tbb::parallel_reduce (blocked_range<size_t> (0,L),min);
     return min.my_index;
+}
+
+
+int *CreatePartialHistogram (float *ai, int ki, int nt, int n, int bin_size, int max_value) 
+{
+int *hp = new int[max_value/bin_size];
+
+for (int i = ki*n/nt ; i < (ki+1)*n/nt; i++) 
+    {
+    hp[(int)(ai[i]/bin_size)]=hp[(int)(ai[i]/bin_size)]+1; 
+    }
+return hp;  
+}
+
+int *getsum_tbb (int **ai, int nt, int bin_size, int max_value) 
+{
+ SumFun pf(ai, bin_size, max_value);
+ parallel_reduce (blocked_range<int>(0,nt), pf);
+ return pf.my_sum;
 }
 
 
@@ -102,32 +158,31 @@ typedef struct
 
 
 
-int main() {
+int main(int argc, char **argv) {
+    
+    int n = 305000;
+
+
+    int nt;
+    // Reading Input arguments
+    //   argc: # of arguments. 
+    //   argv: array of strings holding the arguments. argv[0]: ./mysequence, argv[1]: n
+    if (argc != 2) 
+    {
+       printf ("Warning: Usage: %s n\n", argv[0]); 
+       printf ("Using n = 10 as default\n");
+       nt = 4;
+    }
+    else nt = atoi(argv[1]);  
 
     FILE *file_o1;
     FILE *file_o2;
     char *out_file1 = "engine_speed_histogram.bof";
     char *out_file2 = "vehicle_speed_histogram.bof";
 
-    int n = 305000;
-    
+
     DATA1 Engine_Speed;
-    int histogram_engine_speed_binsize = 500;
-    int histogram_engine_speed[8000/histogram_engine_speed_binsize]; 
-    for(int i = 0; i <8000/histogram_engine_speed_binsize; i++)
-    {
-        histogram_engine_speed[i] = 0;
-    }
-
     DATA1 Vehicle_Speed;
-    int histogram_vehicle_speed_binsize = 10;
-    int histogram_vehicle_speed[160/histogram_vehicle_speed_binsize]; 
-    for(int i = 0; i <160/histogram_vehicle_speed_binsize; i++)
-    {
-        histogram_vehicle_speed[i] = 0;
-    }
-
-
     DATA1 ECT;
     DATA1 Fuel_Percent;
     DATA1 Distance_Since_Clear;
@@ -331,7 +386,9 @@ int main() {
     }
     
     file1.close();
-    
+
+
+    //variable setup and dynamic memory allocation for the min, max, and avg
     //Create 2-D array of data vectors 
     //int Data_set_lengths[5] = {Engine_Speed.Data_Length , Vehicle_Speed.Data_Length, ECT.Data_Length, Fuel_Percent.Data_Length, Distance_Since_Clear.Data_Length};
     int number_of_rows = 5;
@@ -350,19 +407,66 @@ int main() {
     A[3] = Fuel_Percent.Data; 
     A[4] = Distance_Since_Clear.Data;  
     
-
     float max[5];
     float min[5];
 
+
+    //variable setup and dynamic variable allocation for the histograms for engine speed and vehicle speed
+
+    int engine_speed_h_binsize = 500;
+    int **engine_speed_hp;
+    int *engine_speed_h;
+    engine_speed_hp = (int **) calloc ((nt), sizeof(int*));
+    for(int i = 0; i < nt; i++)
+    {
+        engine_speed_hp[i] = (int*)calloc((8000/engine_speed_h_binsize),sizeof(int));
+    }
+    engine_speed_h = (int *) calloc((8000/engine_speed_h_binsize), sizeof(int));
+    for(int i = 0; i <(8000/engine_speed_h_binsize); i++)
+    {
+        engine_speed_h[i] = 0;
+    }
+
+    int vehicle_speed_h_binsize = 10;
+    int **vehicle_speed_hp;
+    int *vehicle_speed_h;
+    vehicle_speed_hp = (int **) calloc ((nt), sizeof(int*));
+    for(int i = 0; i < nt; i++)
+    {
+        vehicle_speed_hp[i] = (int*)calloc((160/vehicle_speed_h_binsize),sizeof(int));
+    }
+    vehicle_speed_h = (int *) calloc((160/vehicle_speed_h_binsize), sizeof(int));
+    for(int i = 0; i <(160/vehicle_speed_h_binsize); i++)
+    {
+        vehicle_speed_h[i] = 0;
+    }
+
+
+
     gettimeofday (&start, NULL);
     //Max Values and Min Values
-    tbb::parallel_for(int(0), int(number_of_rows*2), [&] (int i)
-    {
+    tbb::parallel_for(int(0), int(number_of_rows*3) + (2*nt), [&] (int i)
+    {   
         if(i < 5) {max[i] = getmax_tbb(A[i] , number_of_cols);}
         else if(i < 10) {min[i-5] = getmin_tbb(A[i-5] , number_of_cols);}
+        else if(i < 15) { }
+        else if(i < (15 + nt)) 
+        {
+            engine_speed_hp[i-15] = CreatePartialHistogram (Engine_Speed.Data, (i-15), nt, Engine_Speed.Data_Length, engine_speed_h_binsize, 8000);                 
+        }
+        else if(i < (15 + (2 * nt))) 
+        {       
+            vehicle_speed_hp[(i-(15+nt))] = CreatePartialHistogram (Vehicle_Speed.Data, (i-(15+nt)), nt, Vehicle_Speed.Data_Length, vehicle_speed_h_binsize, 160);     
+        }
     });
+
+    engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
+    vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);
     
     
+
+    gettimeofday (&end, NULL);
+
 
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
@@ -372,12 +476,7 @@ int main() {
     //Now let's get the histogram for vehicle speed
     
 
-    gettimeofday (&end, NULL);
-    for(int i = 0; i < number_of_rows; ++i)
-    {
-        free(A[i]);
-    }
-    free(A);
+ 
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
     int ECT_max_index = max[2];
@@ -414,19 +513,19 @@ int main() {
     cout << "-------------------------------------------------------------" << endl;
     
     cout << "----------------------Engine Speed Histogram Values-----------------------------" << endl;
-    cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << histogram_engine_speed_binsize << endl;
-    for (int i = 0; i < 8000/histogram_engine_speed_binsize; i++)
+    cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << engine_speed_h_binsize << endl;
+    for (int i = 0; i < 8000/engine_speed_h_binsize; i++)
     {
-    cout << "Bin Number: " << i << "   Range: " << i*histogram_engine_speed_binsize << "  -  " << (i*histogram_engine_speed_binsize) + histogram_engine_speed_binsize << "   Value:  " << histogram_engine_speed[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << i*engine_speed_h_binsize << "  -  " << (i*engine_speed_h_binsize) + engine_speed_h_binsize << "   Value:  " << engine_speed_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 
 
     cout << "----------------------Vehicle Speed Histogram Values-----------------------------" << endl;
-    cout << "Engine Speed Histogram (Range 0-160 km/hr): Bin Size " << histogram_vehicle_speed_binsize << endl;
-    for (int i = 0; i < 160/histogram_vehicle_speed_binsize; i++)
+    cout << "Engine Speed Histogram (Range 0-160 km/hr): Bin Size " << vehicle_speed_h_binsize << endl;
+    for (int i = 0; i < 160/vehicle_speed_h_binsize; i++)
     {
-    cout << "Bin Number: " << i << "   Range: " << i*histogram_vehicle_speed_binsize << "  -  " << (i*histogram_vehicle_speed_binsize) + histogram_vehicle_speed_binsize << "   Value:  " << histogram_vehicle_speed[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << i*vehicle_speed_h_binsize << "  -  " << (i*vehicle_speed_h_binsize) + vehicle_speed_h_binsize << "   Value:  " << vehicle_speed_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 
@@ -437,7 +536,7 @@ int main() {
     file_o1 = fopen (out_file1,"wb");
        if (file_o1 == NULL) return -1;// check that the file was actually opened
        
-       result = fwrite (histogram_engine_speed, sizeof(int), 8000/histogram_engine_speed_binsize, file_o1); // each element (pixel) is of size int (4 bytes)
+       result = fwrite (engine_speed_h, sizeof(int), 8000/engine_speed_h_binsize, file_o1); // each element (pixel) is of size int (4 bytes)
                    
        printf ("Output binary file (engine speed): # of elements written = %d\n", result); // Total # of elements successfully read
        fclose (file_o1);
@@ -448,7 +547,7 @@ int main() {
     file_o2 = fopen (out_file2,"wb");
        if (file_o2 == NULL) return -1;// check that the file was actually opened
        
-       result = fwrite (histogram_vehicle_speed, sizeof(int), 160/histogram_vehicle_speed_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
+       result = fwrite (vehicle_speed_h, sizeof(int), 160/vehicle_speed_h_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
                    
        printf ("Output binary file (vehicle): # of elements written = %d\n", result); // Total # of elements successfully read
        fclose (file_o2);		
@@ -476,7 +575,11 @@ int main() {
     // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
     //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
     // }
-    
+    for(int i = 0; i < number_of_rows; ++i)
+    {
+        free(A[i]);
+    }
+    free(A);
 
     return 0;
 }
