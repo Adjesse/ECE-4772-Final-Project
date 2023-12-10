@@ -101,7 +101,8 @@ public:
     for(int j = 0; j < (my_max_value/my_bin_size); ++j)
      {
        my_sum[j] += y.my_sum[j]; 
-     }      
+     } 
+     delete[] y.my_sum;    
  }
 };
 
@@ -138,6 +139,7 @@ int *getsum_tbb (int **ai, int nt, int bin_size, int max_value)
  SumFun pf(ai, bin_size, max_value);
  parallel_reduce (blocked_range<int>(0,nt), pf);
  return pf.my_sum;
+ delete[] pf.my_sum;
 }
 
 
