@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
        nt = 4;
     }
     else nt = atoi(argv[1]);  
-
+    
     FILE *file_o1;
     FILE *file_o2;
     char *out_file1 = "engine_speed_histogram.bof";
@@ -488,8 +488,18 @@ int main(int argc, char **argv) {
     } */
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
+    free(engine_speed_hp);
+    for(int i = 0; i < 8000/engine_speed_h_binsize; i++)
+    {
+        free(engine_speed_hp[i]);
+    }
+
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);
-    
+    free(vehicle_speed_hp);
+    for(int i = 0; i < 160/vehicle_speed_h_binsize; i++)
+    {
+        free(vehicle_speed_hp[i]);
+    }
     
 
     gettimeofday (&end, NULL);
@@ -600,7 +610,7 @@ int main(int argc, char **argv) {
     // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
     //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
     // }
-    for(int i = 0; i < number_of_rows; ++i)
+    for(int i = 0; i < number_of_rows; i++)
     {
         free(A[i]);
     }
@@ -609,7 +619,8 @@ int main(int argc, char **argv) {
     free(Vehicle_Speed.timestamp); free(Vehicle_Speed.PID); free( Vehicle_Speed.Data);
     free(ECT.timestamp); free(ECT.PID); free(ECT.Data);
     free(Fuel_Percent.timestamp); free(Fuel_Percent.PID); free(Fuel_Percent.Data);   
-    free(Distance_Since_Clear.timestamp); free(Distance_Since_Clear.PID); free(Distance_Since_Clear.Data);     
+    free(Distance_Since_Clear.timestamp); free(Distance_Since_Clear.PID); free(Distance_Since_Clear.Data);
+    free(engine_speed_h); free(vehicle_speed_h);    
      
 
     return 0;
