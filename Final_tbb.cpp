@@ -463,6 +463,27 @@ int main(int argc, char **argv) {
         }
     });
 
+    cout << "Engine Speed Partial" << endl;
+
+    for(int i = 0; i < 4; i++)
+    {
+        for(int j = 0; j < 16; j++)
+        {
+            cout << i << "   " << j << "   " <<   engine_speed_hp[i][j] << endl;
+        }
+    }
+
+
+    cout << "Vehicle Speed Partial" << endl;
+
+     for(int i = 0; i < 4; i++)
+    {
+        for(int j = 0; j < 16; j++)
+        {
+            cout << i << "   " << j << "   " <<   vehicle_speed_hp[i][j] << endl;
+        }
+    }
+
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, 8000);
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, 160);
     
