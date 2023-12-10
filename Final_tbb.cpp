@@ -476,9 +476,6 @@ int main(int argc, char **argv) {
     
     //Now let's get the histogram for vehicle speed
     
-
-    gettimeofday (&end, NULL);
-    
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
     int ECT_max_index = max[2];
