@@ -146,11 +146,6 @@ int main(int argc, char **argv) {
     Fuel_Percent.Data_Length = Fuel_Percent.Data_Length*n_multiplier;
     Distance_Since_Clear.Data_Length = Distance_Since_Clear.Data_Length*n_multiplier;
     
-    cout << Engine_Speed.Data_Length << endl;
-    cout << Vehicle_Speed.Data_Length << endl;
-    cout << ECT.Data_Length << endl;
-    cout << Fuel_Percent.Data_Length << endl;
-    cout << Distance_Since_Clear.Data_Length << endl;
 
     
     
@@ -267,11 +262,6 @@ int main(int argc, char **argv) {
     
     file1.close();
     
-    cout << Engine_Speed.Data_Length << endl;
-    cout << Vehicle_Speed.Data_Length << endl;
-    cout << ECT.Data_Length << endl;
-    cout << Fuel_Percent.Data_Length << endl;
-    cout << Distance_Since_Clear.Data_Length << endl;
 
     //expand the vector by themselves n_multiplier times
     duplicateArray(Engine_Speed, n_multiplier);
@@ -279,55 +269,7 @@ int main(int argc, char **argv) {
     duplicateArray(ECT, n_multiplier);
     duplicateArray(Fuel_Percent, n_multiplier);
     duplicateArray(Distance_Since_Clear, n_multiplier);
-    // for (int i = 0; i < (Engine_Speed.Data_Length/n_multiplier); i++) 
-    // {   for (int j = 1; j < n_multiplier; j++)
-    //     {
-    //      Engine_Speed.timestamp[(Engine_Speed.Data_Length/n_multiplier*j)+i] =  Engine_Speed.timestamp[i];
-    //      Engine_Speed.PID[(Engine_Speed.Data_Length/n_multiplier*j)+i] =  Engine_Speed.PID[i];
-    //      Engine_Speed.Data[(Engine_Speed.Data_Length/n_multiplier*j)+i] =  Engine_Speed.Data[i];
-    //     }     
-    // }
-    cout << "1" << endl;
-    // for (int i = 0; i < Vehicle_Speed.Data_Length/n_multiplier; i++) 
-    // {   for (int j = 1; j < n_multiplier; j++)
-    //     {
-    //      Vehicle_Speed.timestamp[(Vehicle_Speed.Data_Length/n_multiplier*j)+i] =  Vehicle_Speed.timestamp[i];
-    //      Vehicle_Speed.PID[(Vehicle_Speed.Data_Length/n_multiplier*j)+i] =  Vehicle_Speed.PID[i];
-    //      Vehicle_Speed.Data[(Vehicle_Speed.Data_Length/n_multiplier*j)+i] =  Vehicle_Speed.Data[i];
-    //     }     
-    // }
-    // for (int i = 0; i < ECT.Data_Length/n_multiplier; i++) 
-    // {   for (int j = 1; j < n_multiplier; j++)
-    //     {
-    //      ECT.timestamp[(ECT.Data_Length/n_multiplier*j)+i] =  ECT.timestamp[i];
-    //      ECT.PID[(ECT.Data_Length/n_multiplier*j)+i] =  ECT.PID[i];
-    //      ECT.Data[(ECT.Data_Length/n_multiplier*j)+i] =  ECT.Data[i];
-    //     }     
-    // }
-    // for (int i = 0; i < Fuel_Percent.Data_Length/n_multiplier; i++) 
-    // {   for (int j = 1; j < n_multiplier; j++)
-    //     {
-    //      Fuel_Percent.timestamp[(Fuel_Percent.Data_Length/n_multiplier*j)+i] =  Fuel_Percent.timestamp[i];
-    //      Fuel_Percent.PID[(Fuel_Percent.Data_Length/n_multiplier*j)+i] =  Fuel_Percent.PID[i];
-    //      Fuel_Percent.Data[(Fuel_Percent.Data_Length/n_multiplier*j)+i] =  Fuel_Percent.Data[i];
-    //     }     
-    // }
-    // for (int i = 0; i < Distance_Since_Clear.Data_Length/n_multiplier; i++) 
-    // {   for (int j = 1; j < n_multiplier; j++)
-    //     {
-    //      Distance_Since_Clear.timestamp[(Distance_Since_Clear.Data_Length/n_multiplier*j)+i] =  Distance_Since_Clear.timestamp[i];
-    //      Distance_Since_Clear.PID[(Distance_Since_Clear.Data_Length/n_multiplier*j)+i] =  Distance_Since_Clear.PID[i];
-    //      Distance_Since_Clear.Data[(Distance_Since_Clear.Data_Length/n_multiplier*j)+i] =  Distance_Since_Clear.Data[i];
-    //     }     
-    // }
-    cout << Engine_Speed.Data_Length << endl;
-    cout << Vehicle_Speed.Data_Length << endl;
-    cout << ECT.Data_Length << endl;
-    cout << Fuel_Percent.Data_Length << endl;
-    cout << Distance_Since_Clear.Data_Length << endl;
     
-
-
 
     //variable setup and dynamic memory allocation for the min, max, and avg
     //Create 2-D array of data vectors 
