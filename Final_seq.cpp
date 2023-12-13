@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
     float *acc;
     int *acc_h;
     acc = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
-    acc_h = (int *) calloc(10/1, sizeof(int));
+    acc_h = (int *) calloc(20/1, sizeof(int));
   
     count = 0;
    
@@ -307,12 +307,17 @@ int main(int argc, char **argv) {
     
     //Now let's get the histogram for vehicle speed
     CreateHistogram(Vehicle_Speed.Data, vehicle_speed_h, vehicle_speed_h_binsize, Vehicle_Speed.Data_Length);
-
+    
     for(int i = 1; i < Vehicle_Speed.Data_Length; i++)
     {
         acc[i] = (Vehicle_Speed.Data[i] -  Vehicle_Speed.Data[i-1]) / ((Vehicle_Speed.timestamp[i] - Vehicle_Speed.timestamp[i-1])*3.6);
-
+        cout << acc[i] << endl;
     }
+     for (int i = 0; i < 20/1; i++)
+    {
+    cout << "Bin Number: " << i << "   Range: " << (i*1)-10 << "  -  " << (i*1) + 1 - 10<< "   Value:  " << acc_h[i] << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
     CreateHistogram_w_negatives(acc , acc_h , 1 , Vehicle_Speed.Data_Length,10);
 
     gettimeofday (&end, NULL);
@@ -372,7 +377,7 @@ int main(int argc, char **argv) {
     cout << "Acc Histogram (Range 0-10 m/s^2): Bin Size " << 1 << endl;
     for (int i = 0; i < 20/1; i++)
     {
-    cout << "Bin Number: " << i-10 << "   Range: " << (i*1)-10 << "  -  " << (i*1) + 1 - 10<< "   Value:  " << acc_h[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << (i*1)-10 << "  -  " << (i*1) + 1 - 10<< "   Value:  " << acc_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 

@@ -48,11 +48,11 @@ void CreateHistogram_w_negatives(float *INPUT_DATA, int OUTPUT_DATA[], int bin_s
     {
         if(INPUT_DATA[i] < 0)
         {
-        OUTPUT_DATA[((int)abs(INPUT_DATA[i])) / bin_size] = OUTPUT_DATA[((int)INPUT_DATA[i]) / bin_size] + 1;
+        OUTPUT_DATA[((int)abs(INPUT_DATA[i])) / bin_size] = OUTPUT_DATA[((int)abs(INPUT_DATA[i])) / bin_size]+ 1;
         }
         else 
         {
-        OUTPUT_DATA[(((int)INPUT_DATA[i]) / bin_size)+(max_value/bin_size)] = OUTPUT_DATA[((int)INPUT_DATA[i]) / bin_size] + 1;
+        OUTPUT_DATA[(((int)INPUT_DATA[i]) / bin_size)+(max_value/bin_size)] = OUTPUT_DATA[(((int)INPUT_DATA[i]) / bin_size)+(max_value/bin_size)] + 1;
         }
     }
 }
