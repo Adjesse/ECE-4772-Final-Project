@@ -2,112 +2,62 @@
 #include <fstream>
 #include <string>
 #include <sys/time.h>
+#include "data_structures.h"
+#include "seq_functions.h"
+
 
 using namespace std;
 
 
-class data
-{
+int main(int argc, char **argv) {
 
 
-};
-typedef struct 
-{
-    float *timestamp;
-    int *PID;
-    float *Data;
-    int Data_Length;
-} DATA1;
+    int n = 305000;
+    int n_multiplier;
 
+    int engine_speed_h_binsize = 500;
+    int engine_speed_h_maxvalue = 8000;
+    int vehicle_speed_h_binsize = 10;
+    int vehicle_speed_h_maxvalue = 160;
 
-typedef struct 
-{
-    float timestamp;
-    int PID;
-    float Data;
-}   tmp_data;
-
-int findMax(float *timestamp , float *data, int datalength)
-{
-    float index_of_max = 0;
-    float max = data[0];
-    for(int i = 0; i < datalength; i++)
+    if (argc != 2) 
     {
-        if(data[i] > max)
-        {   
-            max = data[i];
-            index_of_max = i;
-        }       
-    }  
-    return index_of_max;
-}
-int findMin(float *timestamp , float *data, int datalength)
-{
-    float index_of_min = 0;
-    float min = data[0];
-    for(int i = 0; i < datalength; i++)
-    {
-        if(data[i] < min)
-        {   
-            min = data[i];
-            index_of_min = i;
-        }       
-    }  
-    return index_of_min;
-}
-
-float findAvg(float *data, int datalength)
-{   
-    float sum = 0;
-    float avg = 0; 
-    for(int i = 0; i < datalength; i++)
-    {
-        sum = sum + data[i];
+       printf ("Warning: Usage: %s n\n", argv[0]); 
+       printf ("Using n_multiplier = 1 as default\n");
+       n_multiplier = 1;
     }
-    avg = sum / datalength;
-    return avg;
-}
-
-void CreateHistogram(float *INPUT_DATA, int OUTPUT_DATA[], int bin_size, int data_length)
-{
-for (int i = 0; i < data_length; i++)
+    else 
     {
-        OUTPUT_DATA[(((int)INPUT_DATA[i])/bin_size)] = OUTPUT_DATA[(((int)INPUT_DATA[i])/bin_size)] + 1;
-    } 
-}
-
-
-
-int main() {
+        n_multiplier = atoi(argv[1]);  
+    }
 
     FILE *file_o1;
     FILE *file_o2;
     char *out_file1 = "engine_speed_histogram.bof";
     char *out_file2 = "vehicle_speed_histogram.bof";
 
-    int n = 305000;
-    
     DATA1 Engine_Speed;
-    int histogram_engine_speed_binsize = 500;
-    int histogram_engine_speed[8000/histogram_engine_speed_binsize]; 
-    for(int i = 0; i <8000/histogram_engine_speed_binsize; i++)
-    {
-        histogram_engine_speed[i] = 0;
-    }
-
     DATA1 Vehicle_Speed;
-    int histogram_vehicle_speed_binsize = 10;
-    int histogram_vehicle_speed[160/histogram_vehicle_speed_binsize]; 
-    for(int i = 0; i <160/histogram_vehicle_speed_binsize; i++)
-    {
-        histogram_vehicle_speed[i] = 0;
-    }
-
-
     DATA1 ECT;
     DATA1 Fuel_Percent;
     DATA1 Distance_Since_Clear;
+    
 
+    int engine_speed_h[engine_speed_h_maxvalue/engine_speed_h_binsize];
+    int vehicle_speed_h[vehicle_speed_h_maxvalue/vehicle_speed_h_binsize];
+
+    for(int i = 0; i <8000/engine_speed_h_binsize; i++)
+    {
+        engine_speed_h[i] = 0;
+    }
+
+    for(int i = 0; i <160/vehicle_speed_h_binsize; i++)
+    {
+        vehicle_speed_h[i] = 0;
+    }
+
+
+    
     struct timeval start, end;
     long t_us;
     
@@ -308,6 +258,12 @@ int main() {
     
     file1.close();
 
+    //expand the vector by themselves n_multiplier times
+    duplicateArray(Engine_Speed, n_multiplier);
+    duplicateArray(Vehicle_Speed, n_multiplier);
+    duplicateArray(ECT, n_multiplier);
+    duplicateArray(Fuel_Percent, n_multiplier);
+    duplicateArray(Distance_Since_Clear, n_multiplier);
 
 
     // Now Engine_Speed contains your data
@@ -336,10 +292,10 @@ int main() {
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
     //therefoe the bin_size = 500
-    CreateHistogram(Engine_Speed.Data, histogram_engine_speed, histogram_engine_speed_binsize, Engine_Speed.Data_Length);
+    CreateHistogram(Engine_Speed.Data, engine_speed_h, engine_speed_h_binsize, Engine_Speed.Data_Length);
     
     //Now let's get the histogram for vehicle speed
-    CreateHistogram(Vehicle_Speed.Data, histogram_vehicle_speed, histogram_vehicle_speed_binsize, Vehicle_Speed.Data_Length);
+    CreateHistogram(Vehicle_Speed.Data, vehicle_speed_h, vehicle_speed_h_binsize, Vehicle_Speed.Data_Length);
 
     gettimeofday (&end, NULL);
 
@@ -377,19 +333,19 @@ int main() {
     cout << "-------------------------------------------------------------" << endl;
 
     cout << "----------------------Engine Speed Histogram Values-----------------------------" << endl;
-    cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << histogram_engine_speed_binsize << endl;
-    for (int i = 0; i < 8000/histogram_engine_speed_binsize; i++)
+    cout << "Engine Speed Histogram (Range 0-8000 RPM): Bin Size " << engine_speed_h_binsize << endl;
+    for (int i = 0; i < 8000/engine_speed_h_binsize; i++)
     {
-    cout << "Bin Number: " << i << "   Range: " << i*histogram_engine_speed_binsize << "  -  " << (i*histogram_engine_speed_binsize) + histogram_engine_speed_binsize << "   Value:  " << histogram_engine_speed[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << i*engine_speed_h_binsize << "  -  " << (i*engine_speed_h_binsize) + engine_speed_h_binsize << "   Value:  " << engine_speed_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 
 
     cout << "----------------------Vehicle Speed Histogram Values-----------------------------" << endl;
-    cout << "Engine Speed Histogram (Range 0-160 km/hr): Bin Size " << histogram_vehicle_speed_binsize << endl;
-    for (int i = 0; i < 160/histogram_vehicle_speed_binsize; i++)
+    cout << "Engine Speed Histogram (Range 0-160 km/hr): Bin Size " << vehicle_speed_h_binsize << endl;
+    for (int i = 0; i < 160/vehicle_speed_h_binsize; i++)
     {
-    cout << "Bin Number: " << i << "   Range: " << i*histogram_vehicle_speed_binsize << "  -  " << (i*histogram_vehicle_speed_binsize) + histogram_vehicle_speed_binsize << "   Value:  " << histogram_vehicle_speed[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << i*vehicle_speed_h_binsize << "  -  " << (i*vehicle_speed_h_binsize) + vehicle_speed_h_binsize << "   Value:  " << vehicle_speed_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 
@@ -400,7 +356,7 @@ int main() {
     file_o1 = fopen (out_file1,"wb");
        if (file_o1 == NULL) return -1;// check that the file was actually opened
        
-       result = fwrite (histogram_engine_speed, sizeof(int), 8000/histogram_engine_speed_binsize, file_o1); // each element (pixel) is of size int (4 bytes)
+       result = fwrite (engine_speed_h, sizeof(int), 8000/engine_speed_h_binsize, file_o1); // each element (pixel) is of size int (4 bytes)
                    
        printf ("Output binary file (engine speed): # of elements written = %d\n", result); // Total # of elements successfully read
        fclose (file_o1);
@@ -411,7 +367,7 @@ int main() {
     file_o2 = fopen (out_file2,"wb");
        if (file_o2 == NULL) return -1;// check that the file was actually opened
        
-       result = fwrite (histogram_vehicle_speed, sizeof(int), 160/histogram_vehicle_speed_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
+       result = fwrite (vehicle_speed_h, sizeof(int), 160/vehicle_speed_h_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
                    
        printf ("Output binary file (vehicle): # of elements written = %d\n", result); // Total # of elements successfully read
        fclose (file_o2);		
