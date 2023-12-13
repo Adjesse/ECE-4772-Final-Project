@@ -43,4 +43,19 @@ void CreateHistogram(float *INPUT_DATA, int OUTPUT_DATA[], int bin_size, int dat
     }
 }
 
+void CreateHistogram_w_negatives(float *INPUT_DATA, int OUTPUT_DATA[], int bin_size, int data_length, int max_value) {
+    for (int i = 0; i < data_length; i++) 
+    {
+        if(INPUT_DATA[i] < 0)
+        {
+        OUTPUT_DATA[((int)abs(INPUT_DATA[i])) / bin_size] = OUTPUT_DATA[((int)INPUT_DATA[i]) / bin_size] + 1;
+        }
+        else 
+        {
+        OUTPUT_DATA[(((int)INPUT_DATA[i]) / bin_size)+(max_value/bin_size)] = OUTPUT_DATA[((int)INPUT_DATA[i]) / bin_size] + 1;
+        }
+    }
+}
+
+
 #endif // MYFUNCTIONS_H
