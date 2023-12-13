@@ -6,6 +6,7 @@
 #include "data_structures.h"
 #include "computation_classes.h"
 #include <iomanip>
+#include "pipline.h"
 
 using namespace std;
 using namespace tbb; 
@@ -189,6 +190,11 @@ int main(int argc, char **argv) {
     
   
     count = 0;
+
+    float* acceleration;
+    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
+
+    int pipline_result[3] = {0,0,0};
    
      ifstream file1(filename);
 
@@ -347,11 +353,32 @@ int main(int argc, char **argv) {
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, engine_speed_h_maxvalue);
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, vehicle_speed_h_maxvalue);
+
+//int main() {
+//     Vehicle_Speed vehicleSpeed;  // Replace this with your actual instantiation
+//     // Assuming vehicleSpeed is initialized with the required data
+
+    RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipline_result);
+
+
+//     // Now 'acc' vector contains acceleration values
+//     // Do something with the 'acc' vector if needed
+
+//     return 0;
+// }
    
 
     gettimeofday (&end, NULL);
 
+    for(int i = 0; i < 3; i++)
+    {
+        cout << "Pipline index " << i << "  =  " << pipline_result[i] << endl;
+    };
 
+    for(int i = 0; i < 40; i++)
+    {
+        acceleration[i];
+    }
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
     //therefoe the bin_size = 500
@@ -449,6 +476,7 @@ int main(int argc, char **argv) {
      // gettimeofday: returns current time. So, when the secs increment, the us resets to 0.
     printf ("Elapsed time: %ld us\n", t_us);
 
+    free(acceleration);
     free(engine_speed_hp);
     for(int i = 0; i < nt; i++)
     {

@@ -3,7 +3,7 @@
 #ifndef SEQ_FUNCTIONS_H
 #define SEQ_FUNCTIONS_H
 
-int findMax(float *timestamp, float *data, int datalength) {
+int findMax(float *data, int datalength) {
     float index_of_max = 0;
     float max = data[0];
     for (int i = 0; i < datalength; i++) {
@@ -15,7 +15,7 @@ int findMax(float *timestamp, float *data, int datalength) {
     return index_of_max;
 }
 
-int findMin(float *timestamp, float *data, int datalength) {
+int findMin(float *data, int datalength) {
     float index_of_min = 0;
     float min = data[0];
     for (int i = 0; i < datalength; i++) {

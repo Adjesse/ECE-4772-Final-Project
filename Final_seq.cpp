@@ -280,18 +280,18 @@ int main(int argc, char **argv) {
     // Now Engine_Speed contains your data
     gettimeofday (&start, NULL);
     //Max Values
-    int engine_speed_max_index = findMax(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
-    int vehicle_speed_max_index = findMax(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
-    int fuel_percent_max_index = findMax(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
-    int ECT_max_index = findMax(ECT.timestamp,ECT.Data,ECT.Data_Length);
-    int Distance_Since_Clear_max_index = findMax(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
+    int engine_speed_max_index = findMax(Engine_Speed.Data,Engine_Speed.Data_Length);
+    int vehicle_speed_max_index = findMax(Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
+    int fuel_percent_max_index = findMax(Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    int ECT_max_index = findMax(ECT.Data,ECT.Data_Length);
+    int Distance_Since_Clear_max_index = findMax(Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
     
     //Min Values
-    int engine_speed_min_index = findMin(Engine_Speed.timestamp,Engine_Speed.Data,Engine_Speed.Data_Length);
-    int vehicle_speed_min_index = findMin(Vehicle_Speed.timestamp,Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
-    int fuel_percent_min_index = findMin(Fuel_Percent.timestamp,Fuel_Percent.Data,Fuel_Percent.Data_Length);
-    int ECT_min_index = findMin(ECT.timestamp,ECT.Data,ECT.Data_Length);
-    int Distance_Since_Clear_min_index = findMin(Distance_Since_Clear.timestamp,Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
+    int engine_speed_min_index = findMin(Engine_Speed.Data,Engine_Speed.Data_Length);
+    int vehicle_speed_min_index = findMin(Vehicle_Speed.Data,Vehicle_Speed.Data_Length);
+    int fuel_percent_min_index = findMin(Fuel_Percent.Data,Fuel_Percent.Data_Length);
+    int ECT_min_index = findMin(ECT.Data,ECT.Data_Length);
+    int Distance_Since_Clear_min_index = findMin(Distance_Since_Clear.Data,Distance_Since_Clear.Data_Length);
     
     //AVG Values
     float engine_speed_avg = findAvg(Engine_Speed.Data,Engine_Speed.Data_Length);
