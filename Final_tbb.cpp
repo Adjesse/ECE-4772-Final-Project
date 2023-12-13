@@ -5,9 +5,7 @@
 #include <tbb/tbb.h>
 #include "data_structures.h"
 #include "computation_classes.h"
-
-//#include "C:/Program Files (x86)/Intel/oneAPI/tbb/2021.11/include/tbb/tbb.h"
-
+#include <iomanip>
 
 using namespace std;
 using namespace tbb; 
@@ -133,20 +131,21 @@ int main(int argc, char **argv) {
     
     file.close();
 
-    cout << Engine_Speed.Data_Length << endl;
-    cout << Vehicle_Speed.Data_Length << endl;
-    cout << ECT.Data_Length << endl;
-    cout << Fuel_Percent.Data_Length << endl;
-    cout << Distance_Since_Clear.Data_Length << endl;
-    cout << count << endl;
-    
+     
     Engine_Speed.Data_Length = Engine_Speed.Data_Length*n_multiplier;
     Vehicle_Speed.Data_Length = Vehicle_Speed.Data_Length*n_multiplier;
     ECT.Data_Length = ECT.Data_Length*n_multiplier;
     Fuel_Percent.Data_Length = Fuel_Percent.Data_Length*n_multiplier;
     Distance_Since_Clear.Data_Length = Distance_Since_Clear.Data_Length*n_multiplier;
     
+    std::cout << "Engine Speed Data Length =      " << std::setw(5) << Engine_Speed.Data_Length << std::endl;
+    std::cout << "Vehicle Speed Data Length =     " << std::setw(5) << Vehicle_Speed.Data_Length << std::endl;
+    std::cout << "ECT Data Length =               " << std::setw(5) << ECT.Data_Length << std::endl;
+    std::cout << "Fuel Percent Data Length =      " << std::setw(5) << Fuel_Percent.Data_Length << std::endl;
+    std::cout << "Distance Traveled Data Length = " << std::setw(5) << Distance_Since_Clear.Data_Length << std::endl;
+    std::cout << "Total Data Set Length =         " << std::setw(5) << count * n_multiplier << std::endl;
 
+    
     
     
     Engine_Speed.timestamp = (float *) calloc(Engine_Speed.Data_Length, sizeof(float));
@@ -344,27 +343,7 @@ int main(int argc, char **argv) {
         }
     });
 
-    // cout << "Engine Speed Partial" << endl;
 
-    // for(int i = 0; i < 4; i++)
-    // {
-    //     for(int j = 0; j < 16; j++)
-    //     {
-    //         cout << i << "   " << j << "   " <<   engine_speed_hp[i][j] << endl;
-    //     }
-    // }
-
-
-    // cout << "Vehicle Speed Partial" << endl;
-
-    //  for(int i = 0; i < 4; i++)
-    // {
-    //     for(int j = 0; j < 16; j++)
-    //     {
-    //         cout << i << "   " << j << "   " <<   vehicle_speed_hp[i][j] << endl;
-    //     }
-    // } 
-    
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, engine_speed_h_maxvalue);
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, vehicle_speed_h_maxvalue);
@@ -470,47 +449,26 @@ int main(int argc, char **argv) {
      // gettimeofday: returns current time. So, when the secs increment, the us resets to 0.
     printf ("Elapsed time: %ld us\n", t_us);
 
-    //Do something with the data, like printing it for verification
-    // for (int i = 0; i < Engine_Speed.Data_Length; i++) {
-    //    cout << "Timestamp: " << Engine_Speed.timestamp[i] << ", Identifier: " << Engine_Speed.PID[i]  << ", Data: " << Engine_Speed.Data[i]  << endl;
-    // }
-
-    // for (int i = 0; i < Vehicle_Speed.Data_Length; i++) {
-    //    cout << "Timestamp: " << Vehicle_Speed.timestamp[i] << ", Identifier: " << Vehicle_Speed.PID[i]  << ", Data: " << Vehicle_Speed.Data[i]  << endl;
-    // }
-
-    // for (int i = 0; i < ECT.Data_Length; i++) {
-    //    cout << "Timestamp: " << ECT.timestamp[i] << ", Identifier: " << ECT.PID[i]  << ", Data: " << ECT.Data[i]  << endl;
-    // }
-
-    // for (int i = 0; i < Fuel_Percent.Data_Length; i++) {
-    //    cout << "Timestamp: " << Fuel_Percent.timestamp[i] << ", Identifier: " << Fuel_Percent.PID[i]  << ", Data: " << Fuel_Percent.Data[i]  << endl;
-    // }
-
-    cout << "1" << endl;
     free(engine_speed_hp);
     for(int i = 0; i < nt; i++)
     {
         free(engine_speed_hp[i]);
     }
-    cout << "1" << endl;
+
     free(vehicle_speed_hp);
     for(int i = 0; i < nt; i++)
     {
         free(vehicle_speed_hp[i]);
     }
-    cout << "1" << endl;
+
     for(int i = 0; i < number_of_rows; i++)
     {
         free(A[i]);
     }
     free(A);
-    cout << "1" << endl;
     
 
-
-    free(engine_speed_h); free(vehicle_speed_h); 
-    cout << "1" << endl;   
+    free(engine_speed_h); free(vehicle_speed_h);  
      
 
     return 0;

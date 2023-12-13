@@ -1,21 +1,15 @@
 # Makefile for a simple C++ program
 
-# Compiler
-CXX = g++
+CC = g++   # Compiler
+CFLAGS = -std=c++11 -Wall   # Compiler flags
 
-# Compiler flags
-CXXFLAGS = -std=c++11 -Wall
+all: Final_seq Final_tbb   # The default target is to build both programs
 
-# Source file
-SOURCE = Final_seq.cpp
+Final_seq: Final_seq.cpp   # Target for building program1 from source1.cpp
+	$(CC) $(CFLAGS) Final_seq.cpp -o Final_seq
 
-# Executable name
-EXECUTABLE = Final_seq
+Final_tbb: Final_tbb.cpp   # Target for building program2 from source2.cpp
+	$(CC) $(CFLAGS) Final_tbb.cpp -ltbb12 -o Final_tbb
 
-# Rule to build the executable
-$(EXECUTABLE): $(SOURCE)
-	$(CXX) $(CXXFLAGS) $(SOURCE) -o $(EXECUTABLE)
-
-# Clean rule to remove the executable
-clean:
-	rm -f $(EXECUTABLE)
+clean:   # Target for cleaning up generated files
+	rm -f Final_seq Final_tbb

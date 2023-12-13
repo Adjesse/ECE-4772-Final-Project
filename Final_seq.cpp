@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include "data_structures.h"
 #include "seq_functions.h"
+#include <iomanip>
 
 
 using namespace std;
@@ -135,15 +136,20 @@ int main(int argc, char **argv) {
     
     file.close();
 
-    cout << Engine_Speed.Data_Length << endl;
-    cout << Vehicle_Speed.Data_Length << endl;
-    cout << ECT.Data_Length << endl;
-    cout << Fuel_Percent.Data_Length << endl;
-    cout << Distance_Since_Clear.Data_Length << endl;
-    cout << count << endl;
+    
+    Engine_Speed.Data_Length = Engine_Speed.Data_Length*n_multiplier;
+    Vehicle_Speed.Data_Length = Vehicle_Speed.Data_Length*n_multiplier;
+    ECT.Data_Length = ECT.Data_Length*n_multiplier;
+    Fuel_Percent.Data_Length = Fuel_Percent.Data_Length*n_multiplier;
+    Distance_Since_Clear.Data_Length = Distance_Since_Clear.Data_Length*n_multiplier;
 
-    
-    
+    std::cout << "Engine Speed Data Length =      " << std::setw(5) << Engine_Speed.Data_Length << std::endl;
+    std::cout << "Vehicle Speed Data Length =     " << std::setw(5) << Vehicle_Speed.Data_Length << std::endl;
+    std::cout << "ECT Data Length =               " << std::setw(5) << ECT.Data_Length << std::endl;
+    std::cout << "Fuel Percent Data Length =      " << std::setw(5) << Fuel_Percent.Data_Length << std::endl;
+    std::cout << "Distance Traveled Data Length = " << std::setw(5) << Distance_Since_Clear.Data_Length << std::endl;
+    std::cout << "Total Data Set Length =         " << std::setw(5) << count * n_multiplier << std::endl;
+
     
     Engine_Speed.timestamp = (float *) calloc(Engine_Speed.Data_Length, sizeof(float));
     Engine_Speed.PID = (int *) calloc(Engine_Speed.Data_Length, sizeof(int)); // raster scan      
