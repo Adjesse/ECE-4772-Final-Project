@@ -31,7 +31,7 @@ class input{
 public:
     //assign input values 
     input(float* Data_i, float* timestamp_i, int Data_Length_i, float* acceleration_i): 
-    Data_Length(Data_Length_i), timestamp(timestamp_i), Data(Data_i), acceleration(acceleration_i) {}
+    Data_Length(Data_Length_i), timestamp(timestamp_i), Data(Data_i), acceleration(acceleration_i), i(0) {}
 
     Vehicle_Speed operator()(flow_control& fc) const {
         Vehicle_Speed VSS;
@@ -40,7 +40,7 @@ public:
             VSS.Data_Length = Data_Length;
             for(int j = 0; j < VSS.vs_data_length ; j++)
             {
-                VSS.Data[j] = Data[j*i]; VSS.timestamp[j] = timestamp[j*i]; 
+                VSS.Data[j] = Data[100*i + j]; VSS.timestamp[j] = timestamp[100*i + j]; VSS.acceleration[j] = acceleration[100*i + j];
 
 
             }
@@ -115,15 +115,18 @@ void operator()(float* max_min_input) const {
     }
 };
 
-int ntoken = 16;
 // Define the TBB pipeline
 void RunPipeline(float* data, float* timestamp, int datalength, float* acceleration, int* piplineoutput) {
+    int ntoken = 16;
     tbb::parallel_pipeline(ntoken,
-        tbb::make_filter<void, Vehicle_Speed>(tbb::filter::serial_in_order, input(data,timestamp,datalength,acceleration) )
-      & tbb::make_filter<Vehicle_Speed, float*>(tbb::filter::parallel, CalculateAcceleration() ) 
-      & tbb::make_filter<float*, float*>(tbb::filter::serial_in_order, MinMax(datalength) )
-      & tbb::make_filter<float*, void>(tbb::filter::serial_in_order,output(piplineoutput) ));
+        tbb::make_filter<void, Vehicle_Speed>(tbb::filter_mode::serial_in_order, input(data,timestamp,datalength,acceleration) )
+      & tbb::make_filter<Vehicle_Speed, float*>(tbb::filter_mode::parallel, CalculateAcceleration() ) 
+      & tbb::make_filter<float*, float*>(tbb::filter_mode::serial_in_order, MinMax(datalength) )
+      & tbb::make_filter<float*, void>(tbb::filter_mode::serial_in_order,output(piplineoutput) ));
 
 };
+
+
+
 
 #endif
