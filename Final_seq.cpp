@@ -13,7 +13,7 @@ using namespace std;
 int main(int argc, char **argv) {
 
 
-    int n = 305000;
+    int n = 305000; //Length of data file
     int n_multiplier;
 
     int engine_speed_h_binsize = 500;

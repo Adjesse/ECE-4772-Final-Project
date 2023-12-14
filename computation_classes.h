@@ -117,7 +117,7 @@ public:
  float *a = my_a;
  float sum = my_sum; // to not discard earlier accumulations
  for ( size_t i=r.begin(); i!=r.end(); ++i )
- sum += a[i];
+    { sum += a[i];}
  my_sum = sum;
  }
  Accumulation (Accumulation &x, split): my_a(x.my_a), my_sum(0) {}
