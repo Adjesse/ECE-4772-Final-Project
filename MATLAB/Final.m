@@ -93,11 +93,10 @@ max_acceleration_filtered = max_acceleration(max_acceleration > 2.7);
 
 % Display the filtered results
 disp('Min Acceleration below -5.4:');
-%disp(min_acceleration_filtered);
+disp(length(min_acceleration_filtered));
 
 disp('Max Acceleration above 2.7:');
-%disp(max_acceleration_filtered);
-
+disp(length(max_acceleration_filtered));
 
 % Create histograms
 figure;
