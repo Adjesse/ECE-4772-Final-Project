@@ -46,7 +46,7 @@ public:
         }
         else 
         {   
-            cout << "Stage 1 Complete" << endl;
+            //cout << "Stage 1 Complete" << endl;
             fc.stop();
             return VSS;
         }   
@@ -58,10 +58,9 @@ class CalculateAcceleration {
 public:
     float* operator() (Vehicle_Speed input) const {
         float* acceleration = input.acceleration;
-        for (int i = 1; i <= input.vs_data_length; ++i) {
-            acceleration[i] = (input.Data[i] - input.Data[i - 1]) / (input.timestamp[i] - input.timestamp[i - 1] * 3.6);
+        for (int i = 0; i < input.vs_data_length; ++i) {
+            acceleration[i] = (input.Data[i+1] - input.Data[i]) / ((input.timestamp[i+1] - input.timestamp[i]) * 3.6);
         }
-        cout << "Stage 2 Complete" << endl;
         return acceleration;
     }
 };

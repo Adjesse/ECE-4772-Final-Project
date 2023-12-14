@@ -311,7 +311,11 @@ int main(int argc, char **argv) {
     for(int i = 1; i < Vehicle_Speed.Data_Length; i++)
     {
         acc[i] = (Vehicle_Speed.Data[i] -  Vehicle_Speed.Data[i-1]) / ((Vehicle_Speed.timestamp[i] - Vehicle_Speed.timestamp[i-1])*3.6);
-        cout << acc[i] << endl;
+        if( i < 40)
+        {
+         cout << acc[i] << endl;
+        }
+        
     }
      for (int i = 0; i < 20/1; i++)
     {

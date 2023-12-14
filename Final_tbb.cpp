@@ -191,7 +191,7 @@ int main(int argc, char **argv) {
   
     count = 0;
 
-    float* acceleration;
+    float *acceleration;
     acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
 
     int pipeline_result[3] = {0,0,0};
@@ -368,7 +368,7 @@ int main(int argc, char **argv) {
 //     return 0;
 // }
    
-
+////
     gettimeofday (&end, NULL);
 
     for(int i = 0; i < 3; i++)
@@ -378,7 +378,7 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < 40; i++)
     {
-        acceleration[i];
+        cout << "Acceleration  " << i << "  : " << acceleration[i] << endl;
     }
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
@@ -475,19 +475,21 @@ int main(int argc, char **argv) {
     t_us = (end.tv_sec - start.tv_sec)*1000000 + end.tv_usec - start.tv_usec; // for ms: define t_ms as double and divide by 1000.0
      // gettimeofday: returns current time. So, when the secs increment, the us resets to 0.
     printf ("Elapsed time: %ld us\n", t_us);
-
+    
     free(acceleration);
-    free(engine_speed_hp);
+
     for(int i = 0; i < nt; i++)
     {
         free(engine_speed_hp[i]);
     }
+    free(engine_speed_hp);
 
-    free(vehicle_speed_hp);
+    
     for(int i = 0; i < nt; i++)
     {
         free(vehicle_speed_hp[i]);
     }
+    free(vehicle_speed_hp);
 
     for(int i = 0; i < number_of_rows; i++)
     {
@@ -498,7 +500,7 @@ int main(int argc, char **argv) {
 
     free(engine_speed_h); free(vehicle_speed_h);  
      
-
+//
     return 0;
 }
 
