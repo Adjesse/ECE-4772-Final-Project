@@ -315,7 +315,7 @@ int main(int argc, char **argv) {
     //Now let's get the histogram for vehicle speed
     CreateHistogram(Vehicle_Speed.Data, vehicle_speed_h, vehicle_speed_h_binsize, Vehicle_Speed.Data_Length);
     
-    for(int i = 0; i < Vehicle_Speed.Data_Length-1; i++)
+    for(int i = 0; i < Vehicle_Speed.Data_Length; i++)
     {
         acceleration[i] = ((Vehicle_Speed.Data[i+1] -  Vehicle_Speed.Data[i]) / ((Vehicle_Speed.timestamp[i+1] - Vehicle_Speed.timestamp[i])*3.6)) + 10;
         
@@ -324,19 +324,23 @@ int main(int argc, char **argv) {
     for(int i = 0; i < Vehicle_Speed.Data_Length/100; i++)
     {   float min = 0;
         float max = 0;
+        int min_index;
+        int max_index;
         float acceleration_temp[100];
         for(int j = 0; j < 100; j++)
         {
             acceleration_temp[j] = acceleration[(100*i)+j];
         }
         
-        min = findMin(acceleration_temp,100);
-        max = findMax(acceleration_temp,100);
+        min_index = findMin(acceleration_temp,100);
+        max_index = findMax(acceleration_temp,100);
+        min = acceleration_temp[min_index];
+        max = acceleration_temp[max_index];
         if (max > (2.7+10))
         {
         pipeline_result[0] = pipeline_result[0]  + 1;
         }
-        else if(min < (-5.4+10))
+        if(min < (-5.4+10))
         {
         pipeline_result[1]  = pipeline_result[1]  + 1;
         }
@@ -351,10 +355,9 @@ int main(int argc, char **argv) {
 
     gettimeofday (&end, NULL);
     
-    for(int i = 0; i < 3; i++)
-    {
-        cout << "Pipeline index " << i << "  =  " << pipeline_result[i] << endl;
-    };
+    cout << "Hard Acceleration" << "  =  " << pipeline_result[0] << endl;
+    cout << "Hard Braking" << "  =  " << pipeline_result[1] << endl;
+    cout << "Cruising" << "  =  " << pipeline_result[2] << endl;
 
     cout << "----------------------Max Values-----------------------------" << endl;
     cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 

@@ -113,7 +113,7 @@ void operator()(MIN_AND_MAX max_min_input) const {
     {
         *(out) = *(out) + 1;
     }
-    else if(min < (-5.4+10))
+    if(min < (-5.4+10))
     {
         *(out+1) = *(out+1) + 1;
     }

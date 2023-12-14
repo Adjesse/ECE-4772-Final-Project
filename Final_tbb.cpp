@@ -330,7 +330,7 @@ int main(int argc, char **argv) {
     // for(int i = 0; i <(vehicle_speed_h_maxvalue/vehicle_speed_h_binsize); i++)
     // {
     //     vehicle_speed_h[i] = 0;
-    // }
+    // }//
 
     int **acceleration_hp;
     int *acceleration_h;
@@ -395,10 +395,12 @@ int main(int argc, char **argv) {
 ////
     gettimeofday (&end, NULL);
 
-    for(int i = 0; i < 3; i++)
-    {
-        cout << "Pipeline index " << i << "  =  " << pipeline_result[i] << endl;
-    };
+    
+    
+    cout << "Hard Acceleration" << "  =  " << pipeline_result[0] << endl;
+    cout << "Hard Braking" << "  =  " << pipeline_result[1] << endl;
+    cout << "Cruising" << "  =  " << pipeline_result[2] << endl;
+    
 
     // for(int i = 0; i < 40; i++)
     // {
@@ -545,7 +547,7 @@ int main(int argc, char **argv) {
     free(A);
 
     free(engine_speed_h); free(vehicle_speed_h); free(acceleration_h);
-    
+
     cout << "Done" << endl;
     return 0;
 }
