@@ -384,7 +384,7 @@ int main(int argc, char **argv) {
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
     //therefoe the bin_size = 500
    
-    //Now let's get the histogram for vehicle speed
+    //Now let's get the histogram for vehicle speed////
     
     int engine_speed_max_index = max[0];
     int vehicle_speed_max_index = max[1];
@@ -499,7 +499,7 @@ int main(int argc, char **argv) {
     
 
     free(engine_speed_h); free(vehicle_speed_h);  
-     
+    cout << "Done" << endl;
 //
     return 0;
 }

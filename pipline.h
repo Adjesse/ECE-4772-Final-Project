@@ -79,8 +79,12 @@ public:
         
         MIN_AND_MAX out;
         //cout << "Stage 3" << endl; 
-        out.max = input_acc[findMax(input_acc,input_data_length/100)];
-        out.min = input_acc[findMin(input_acc,input_data_length/100)];
+        int temp1; 
+        int temp2;
+        temp1 = findMax(input_acc,100);
+        temp2 = findMin(input_acc,100);
+        out.max = input_acc[temp1];
+        out.min = input_acc[temp2];
 
         return out;
     }
