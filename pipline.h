@@ -42,6 +42,7 @@ public:
             VSS.timestamp = (timestamp+100*i);
             VSS.acceleration = (acceleration+100*i);
             i++;
+            return VSS;
         }
         else 
         {
@@ -54,7 +55,6 @@ public:
 class CalculateAcceleration {
 public:
     float* operator() (Vehicle_Speed input) const {
-
         float* acceleration = input.acceleration;
         for (int i = 1; i <= input.vs_data_length; ++i) {
             acceleration[i] = (input.Data[i] - input.Data[i - 1]) / (input.timestamp[i] - input.timestamp[i - 1] * 3.6);
@@ -63,18 +63,24 @@ public:
     }
 };
 
+class MIN_AND_MAX {
+public:
+float max; 
+float min;
+};
+
 class MinMax{
     int input_data_length;
 public: 
     MinMax(int Data_Length_i): input_data_length(Data_Length_i){}
-    float* operator() (float* input_acc) const {
+    MIN_AND_MAX operator() (float* input_acc) const {
+        
+        MIN_AND_MAX out;
+        cout << "Stage 3" << endl; 
+        out.max = input_acc[findMax(input_acc,input_data_length/100)];
+        out.min = input_acc[findMin(input_acc,input_data_length/100)];
 
-        float max_min[2];
-
-        max_min[0] = input_acc[findMax(input_acc,input_data_length/100)];
-        max_min[1] = input_acc[findMin(input_acc,input_data_length/100)];
-
-        return max_min;
+        return out;
     }
 };
 
@@ -91,9 +97,10 @@ public:
 
 output(int *out_i): out(out_i) {}
 
-void operator()(float* max_min_input) const {
-    int max = max_min_input[0];
-    int min = max_min_input[1];
+void operator()(MIN_AND_MAX max_min_input) const {
+    float max = max_min_input.max;
+    float min = max_min_input.min;
+            cout << "Stage 4" << endl; 
 
 
     if (max > 2.7)
@@ -117,8 +124,8 @@ void RunPipeline(float* data, float* timestamp, int datalength, float* accelerat
     tbb::parallel_pipeline(ntoken,
         tbb::make_filter<void, Vehicle_Speed>(tbb::filter_mode::serial_in_order, input(data,timestamp,datalength,acceleration) )
       & tbb::make_filter<Vehicle_Speed, float*>(tbb::filter_mode::parallel, CalculateAcceleration() ) 
-      & tbb::make_filter<float*, float*>(tbb::filter_mode::serial_in_order, MinMax(datalength) )
-      & tbb::make_filter<float*, void>(tbb::filter_mode::serial_in_order,output(piplineoutput) ));
+      & tbb::make_filter<float*, MIN_AND_MAX>(tbb::filter_mode::serial_in_order, MinMax(datalength) )
+      & tbb::make_filter<MIN_AND_MAX, void>(tbb::filter_mode::serial_in_order,output(piplineoutput) ));
 
 };
 
