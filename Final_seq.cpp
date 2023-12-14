@@ -20,6 +20,8 @@ int main(int argc, char **argv) {
     int engine_speed_h_maxvalue = 8000;
     int vehicle_speed_h_binsize = 10;
     int vehicle_speed_h_maxvalue = 160;
+    int acceleration_h_binsize = 1;
+    int acceleration_h_maxvalue = 20;
 
     if (argc != 2) 
     {
@@ -34,8 +36,10 @@ int main(int argc, char **argv) {
 
     FILE *file_o1;
     FILE *file_o2;
+    FILE *file_o3;
     char *out_file1 = "engine_speed_histogram.bof";
     char *out_file2 = "vehicle_speed_histogram.bof";
+    char *out_file3 = "acceleration_histogram.bof";
 
     DATA1 Engine_Speed;
     DATA1 Vehicle_Speed;
@@ -191,10 +195,11 @@ int main(int argc, char **argv) {
     if (Distance_Since_Clear.Data == NULL) {printf("error");}
     
 
-    float *acc;
-    int *acc_h;
-    acc = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
-    acc_h = (int *) calloc(20/1, sizeof(int));
+    float *acceleration;
+    int *acceleration_h;
+    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
+    acceleration_h = (int *) calloc(20/1, sizeof(int));
+    int pipeline_result[3] = {0,0,0};
   
     count = 0;
    
@@ -277,6 +282,8 @@ int main(int argc, char **argv) {
     duplicateArray(Distance_Since_Clear, n_multiplier);
 
 
+
+
     // Now Engine_Speed contains your data
     gettimeofday (&start, NULL);
     //Max Values
@@ -308,24 +315,44 @@ int main(int argc, char **argv) {
     //Now let's get the histogram for vehicle speed
     CreateHistogram(Vehicle_Speed.Data, vehicle_speed_h, vehicle_speed_h_binsize, Vehicle_Speed.Data_Length);
     
-    for(int i = 1; i < Vehicle_Speed.Data_Length; i++)
+    for(int i = 0; i < Vehicle_Speed.Data_Length-1; i++)
     {
-        acc[i] = (Vehicle_Speed.Data[i] -  Vehicle_Speed.Data[i-1]) / ((Vehicle_Speed.timestamp[i] - Vehicle_Speed.timestamp[i-1])*3.6);
-        if( i < 40)
-        {
-         cout << acc[i] << endl;
-        }
+        acceleration[i] = ((Vehicle_Speed.Data[i+1] -  Vehicle_Speed.Data[i]) / ((Vehicle_Speed.timestamp[i+1] - Vehicle_Speed.timestamp[i])*3.6)) + 10;
         
     }
-     for (int i = 0; i < 20/1; i++)
-    {
-    cout << "Bin Number: " << i << "   Range: " << (i*1)-10 << "  -  " << (i*1) + 1 - 10<< "   Value:  " << acc_h[i] << endl;
+    
+    for(int i = 0; i < Vehicle_Speed.Data_Length/100; i++)
+    {   float min = 0;
+        float max = 0;
+        for(int j = 0; j < 100; j++)
+        {
+            min = findMin(acceleration,Vehicle_Speed.Data_Length);
+            max = findMax(acceleration,Vehicle_Speed.Data_Length);
+            if (max > (2.7+10))
+            {
+            pipeline_result[0] = pipeline_result[0]  + 1;
+            }
+            else if(min < (-5.4+10))
+            {
+            pipeline_result[1]  = pipeline_result[1]  + 1;
+            }
+            else{
+            pipeline_result[2]  = pipeline_result[2]  + 1;
+             }
+
+        }
+       
     }
-    cout << "-------------------------------------------------------------" << endl;
-    CreateHistogram_w_negatives(acc , acc_h , 1 , Vehicle_Speed.Data_Length,10);
+
+    CreateHistogram(acceleration, acceleration_h, acceleration_h_binsize, Vehicle_Speed.Data_Length);
+    //CreateHistogram_w_negatives(acceleration , acceleration_h , 1 , Vehicle_Speed.Data_Length,10);
 
     gettimeofday (&end, NULL);
-
+    
+    for(int i = 0; i < 3; i++)
+    {
+        cout << "Pipeline index " << i << "  =  " << pipeline_result[i] << endl;
+    };
 
     cout << "----------------------Max Values-----------------------------" << endl;
     cout << "Max Engine Speed: " << Engine_Speed.Data[engine_speed_max_index] << "rpm at " << Engine_Speed.timestamp[engine_speed_max_index] 
@@ -377,11 +404,11 @@ int main(int argc, char **argv) {
     }
     cout << "-------------------------------------------------------------" << endl;
 
-    cout << "----------------------Acc Speed Histogram Values-----------------------------" << endl;
-    cout << "Acc Histogram (Range 0-10 m/s^2): Bin Size " << 1 << endl;
-    for (int i = 0; i < 20/1; i++)
+     cout << "----------------------Acceleration Histogram Values-----------------------------" << endl;
+    cout << "Acceleration Histogram (Range " << 10 - acceleration_h_maxvalue << " to " << acceleration_h_maxvalue - 10 << " m/(s^2): Bin Size " << acceleration_h_binsize << endl;
+    for (int i = 0; i < acceleration_h_maxvalue/acceleration_h_binsize; i++)
     {
-    cout << "Bin Number: " << i << "   Range: " << (i*1)-10 << "  -  " << (i*1) + 1 - 10<< "   Value:  " << acc_h[i] << endl;
+    cout << "Bin Number: " << i << "   Range: " << (i*acceleration_h_binsize)-10 << "  -  " << (i*acceleration_h_binsize) + acceleration_h_binsize - 10 << "   Value:  " << acceleration_h[i] << endl;
     }
     cout << "-------------------------------------------------------------" << endl;
 
@@ -406,7 +433,18 @@ int main(int argc, char **argv) {
        result = fwrite (vehicle_speed_h, sizeof(int), 160/vehicle_speed_h_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
                    
        printf ("Output binary file (vehicle): # of elements written = %d\n", result); // Total # of elements successfully read
-       fclose (file_o2);		
+       fclose (file_o2);
+
+
+    //write Acceleration Histogram to .bof file
+    //*************************************
+    file_o3 = fopen (out_file3,"wb");
+       if (file_o3 == NULL) return -1;// check that the file was actually opened
+       
+       result = fwrite (acceleration_h, sizeof(int), acceleration_h_maxvalue/acceleration_h_binsize, file_o3); // each element (pixel) is of size int (4 bytes)
+                   
+       printf ("Output binary file (acceleration): # of elements written = %d\n", result); // Total # of elements successfully read
+       fclose (file_o3);		
 
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec

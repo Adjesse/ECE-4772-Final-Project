@@ -59,7 +59,7 @@ public:
     float* operator() (Vehicle_Speed input) const {
         float* acceleration = input.acceleration;
         for (int i = 0; i < input.vs_data_length; ++i) {
-            acceleration[i] = (input.Data[i+1] - input.Data[i]) / ((input.timestamp[i+1] - input.timestamp[i]) * 3.6);
+            acceleration[i] = ((input.Data[i+1] - input.Data[i]) / ((input.timestamp[i+1] - input.timestamp[i]) * 3.6))+10;
         }
         return acceleration;
     }
@@ -109,11 +109,11 @@ void operator()(MIN_AND_MAX max_min_input) const {
             //cout << "Stage 4" << endl; 
 
 
-    if (max > 2.7)
+    if (max > (2.7+10))
     {
         *(out) = *(out) + 1;
     }
-    else if(min < -5.4)
+    else if(min < (-5.4+10))
     {
         *(out+1) = *(out+1) + 1;
     }

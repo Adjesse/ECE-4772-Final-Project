@@ -23,6 +23,8 @@ int main(int argc, char **argv) {
     int engine_speed_h_maxvalue = 8000;
     int vehicle_speed_h_binsize = 10;
     int vehicle_speed_h_maxvalue = 160;
+    int acceleration_h_binsize = 1;
+    int acceleration_h_maxvalue = 20;
 
 
     int nt; //nt = number of partial histograms computed for the 61,000 datapoints
@@ -45,8 +47,10 @@ int main(int argc, char **argv) {
     
     FILE *file_o1;
     FILE *file_o2;
+    FILE *file_o3;
     char *out_file1 = "engine_speed_histogram.bof";
     char *out_file2 = "vehicle_speed_histogram.bof";
+    char *out_file3 = "acceleration_histogram.bof";
 
 
     DATA1 Engine_Speed;
@@ -328,11 +332,24 @@ int main(int argc, char **argv) {
     //     vehicle_speed_h[i] = 0;
     // }
 
+    int **acceleration_hp;
+    int *acceleration_h;
+    acceleration_hp = (int **) calloc ((nt), sizeof(int*));
+    for(int i = 0; i < nt; i++)
+    {
+        acceleration_hp[i] = (int*)calloc((acceleration_h_maxvalue/acceleration_h_binsize),sizeof(int));
+    }
+    acceleration_h = (int *) calloc((acceleration_h_maxvalue/acceleration_h_binsize), sizeof(int));
+
 
 
     gettimeofday (&start, NULL);
+
+    RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipeline_result);
+    
+
     //Max Values and Min Values
-    tbb::parallel_for(int(0), int(number_of_rows*3) + (2*nt), [&] (int i)
+    tbb::parallel_for(int(0), int(number_of_rows*3) + (3*nt), [&] (int i)
     {   
         if(i < 5) {max[i] = getmax_tbb(A[i] , number_of_cols[i]);}
         else if(i < 10) {min[i-5] = getmin_tbb(A[i-5] , number_of_cols[i-5]);}
@@ -347,18 +364,25 @@ int main(int argc, char **argv) {
             vehicle_speed_hp[(i-(15+nt))] = CreatePartialHistogram (Vehicle_Speed.Data, (i-(15+nt)), nt, Vehicle_Speed.Data_Length, vehicle_speed_h_binsize, vehicle_speed_h_maxvalue);
             //vehicle_speed_hp[0:3] = CreatePartialHistogram (Vehicle_Speed.Data, 0:3, 4, 61000, 10, 160);     
         }
+        else if(i < (15 + (3 * nt)))      //for debugging nt = 4    ---> i = 23 to i = 26
+        {       
+            acceleration_hp[(i-(15+(2*nt)))] = CreatePartialHistogram (acceleration, (i-(15+(2*nt))), nt, Vehicle_Speed.Data_Length, acceleration_h_binsize, acceleration_h_maxvalue);
+            //vehicle_speed_hp[0:3] = CreatePartialHistogram (Vehicle_Speed.Data, 0:3, 4, 61000, 10, 160);     
+        }
+
     });
 
 
 
     engine_speed_h = getsum_tbb(engine_speed_hp, nt, engine_speed_h_binsize, engine_speed_h_maxvalue);
     vehicle_speed_h = getsum_tbb(vehicle_speed_hp, nt, vehicle_speed_h_binsize, vehicle_speed_h_maxvalue);
+    acceleration_h = getsum_tbb(acceleration_hp, nt, acceleration_h_binsize, acceleration_h_maxvalue);
 
 //int main() {
 //     Vehicle_Speed vehicleSpeed;  // Replace this with your actual instantiation
 //     // Assuming vehicleSpeed is initialized with the required data
 
-    RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipeline_result);
+
     
 
 
@@ -373,13 +397,13 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < 3; i++)
     {
-        cout << "Pipline index " << i << "  =  " << pipeline_result[i] << endl;
+        cout << "Pipeline index " << i << "  =  " << pipeline_result[i] << endl;
     };
 
-    for(int i = 0; i < 40; i++)
-    {
-        cout << "Acceleration  " << i << "  : " << acceleration[i] << endl;
-    }
+    // for(int i = 0; i < 40; i++)
+    // {
+    //     cout << "Acceleration  " << i << "  : " << acceleration[i] << endl;
+    // }
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
     //therefoe the bin_size = 500
@@ -446,6 +470,14 @@ int main(int argc, char **argv) {
     }
     cout << "-------------------------------------------------------------" << endl;
 
+    cout << "----------------------Acceleration Histogram Values-----------------------------" << endl;
+    cout << "Acceleration Histogram (Range " << 10 - acceleration_h_maxvalue << " to " << acceleration_h_maxvalue - 10 << " m/(s^2): Bin Size " << acceleration_h_binsize << endl;
+    for (int i = 0; i < acceleration_h_maxvalue/acceleration_h_binsize; i++)
+    {
+    cout << "Bin Number: " << i << "   Range: " << (i*acceleration_h_binsize)-10 << "  -  " << (i*acceleration_h_binsize) + acceleration_h_binsize - 10 << "   Value:  " << acceleration_h[i] << endl;
+    }
+    cout << "-------------------------------------------------------------" << endl;
+
 
     size_t result;
     //write Engine Speed Histogram to .bof file
@@ -466,8 +498,18 @@ int main(int argc, char **argv) {
        
        result = fwrite (vehicle_speed_h, sizeof(int), vehicle_speed_h_maxvalue/vehicle_speed_h_binsize, file_o2); // each element (pixel) is of size int (4 bytes)
                    
-       printf ("Output binary file (vehicle): # of elements written = %d\n", result); // Total # of elements successfully read
-       fclose (file_o2);		
+       printf ("Output binary file (vehicle speed): # of elements written = %d\n", result); // Total # of elements successfully read
+       fclose (file_o2);	
+
+    //write Acceleration Histogram to .bof file
+    //*************************************
+    file_o3 = fopen (out_file3,"wb");
+       if (file_o3 == NULL) return -1;// check that the file was actually opened
+       
+       result = fwrite (acceleration_h, sizeof(int), acceleration_h_maxvalue/acceleration_h_binsize, file_o3); // each element (pixel) is of size int (4 bytes)
+                   
+       printf ("Output binary file (acceleration): # of elements written = %d\n", result); // Total # of elements successfully read
+       fclose (file_o3);			
 
 
     printf ("start: %ld us\n", start.tv_usec); // start.tv_sec
@@ -484,7 +526,12 @@ int main(int argc, char **argv) {
     }
     free(engine_speed_hp);
 
-    
+    for(int i = 0; i < nt; i++)
+    {
+        free(acceleration_hp[i]);
+    }
+    free(acceleration_hp);
+
     for(int i = 0; i < nt; i++)
     {
         free(vehicle_speed_hp[i]);
@@ -496,11 +543,10 @@ int main(int argc, char **argv) {
         free(A[i]);
     }
     free(A);
-    
 
-    free(engine_speed_h); free(vehicle_speed_h);  
+    free(engine_speed_h); free(vehicle_speed_h); free(acceleration_h);
+    
     cout << "Done" << endl;
-//
     return 0;
 }
 
