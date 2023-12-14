@@ -347,7 +347,7 @@ int main(int argc, char **argv) {
 
     RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipeline_result);
     
-
+         
     //Max Values and Min Values
     tbb::parallel_for(int(0), int(number_of_rows*3) + (3*nt), [&] (int i)
     {   

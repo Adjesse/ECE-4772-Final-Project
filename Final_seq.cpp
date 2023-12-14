@@ -319,7 +319,7 @@ int main(int argc, char **argv) {
     {
         acceleration[i] = ((Vehicle_Speed.Data[i+1] -  Vehicle_Speed.Data[i]) / ((Vehicle_Speed.timestamp[i+1] - Vehicle_Speed.timestamp[i])*3.6)) + 10;
         
-    }
+    }   
     
     for(int i = 0; i < Vehicle_Speed.Data_Length/100; i++)
     {   float min = 0;
