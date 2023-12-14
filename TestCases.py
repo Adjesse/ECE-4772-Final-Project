@@ -29,8 +29,11 @@ def function(test_number,cpp_program_path,cpp_arguments):
         #print(data)
 try:
 
-    # function("20",cpp_program_path_seq ,["20"])
-    # function("50",cpp_program_path_seq ,["50"])
+#Seq Test 1-10 +20 +50
+    for i in range(1,11):
+        function(i,cpp_program_path_seq,[str(i)])
+    function(20,cpp_program_path_seq ,["20"])
+    function(50,cpp_program_path_seq ,["50"])
 
     
 # #Test n mult 1-10
@@ -44,16 +47,18 @@ try:
 
 #Test Partial Histogram 1-10
     loop = 1
-    for nmult in range(1,3):
-        if nmult == 1:
-             n_mult = "20"
+    for nmult in range(1,13):
+        if nmult == 11:
+            n_mult = 20
+        elif nmult == 12:
+            n_mult = 50
         else:
-             n_mult = "50" 
+            n_mult = nmult 
         for hp in range(1,11):
-            cpp_arguments_tbb = [n_mult, str(hp)]
+            cpp_arguments_tbb = [str(n_mult), str(hp)]
             test_number = str(loop)
             function(test_number,cpp_program_path_tbb,cpp_arguments_tbb)  
-            loop = loop + 1 
+            loop = loop + 1
 
 
     df = pd.DataFrame(data)
