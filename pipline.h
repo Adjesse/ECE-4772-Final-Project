@@ -42,11 +42,13 @@ public:
             VSS.timestamp = (timestamp+100*i);
             VSS.acceleration = (acceleration+100*i);
             i++;
-            return VSS;
+            return VSS;  
         }
         else 
-        {
+        {   
+            cout << "Stage 1 Complete" << endl;
             fc.stop();
+            return VSS;
         }   
     }
 };
@@ -59,6 +61,7 @@ public:
         for (int i = 1; i <= input.vs_data_length; ++i) {
             acceleration[i] = (input.Data[i] - input.Data[i - 1]) / (input.timestamp[i] - input.timestamp[i - 1] * 3.6);
         }
+        cout << "Stage 2 Complete" << endl;
         return acceleration;
     }
 };
@@ -76,7 +79,7 @@ public:
     MIN_AND_MAX operator() (float* input_acc) const {
         
         MIN_AND_MAX out;
-        cout << "Stage 3" << endl; 
+        //cout << "Stage 3" << endl; 
         out.max = input_acc[findMax(input_acc,input_data_length/100)];
         out.min = input_acc[findMin(input_acc,input_data_length/100)];
 
@@ -100,7 +103,7 @@ output(int *out_i): out(out_i) {}
 void operator()(MIN_AND_MAX max_min_input) const {
     float max = max_min_input.max;
     float min = max_min_input.min;
-            cout << "Stage 4" << endl; 
+            //cout << "Stage 4" << endl; 
 
 
     if (max > 2.7)

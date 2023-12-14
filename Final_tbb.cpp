@@ -85,8 +85,8 @@ int main(int argc, char **argv) {
     Distance_Since_Clear.Data_Length = 0;
 
 
-
 //
+
     while (file >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
         // Assuming your struct has a public array and you want to store each entry
     
@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
     float* acceleration;
     acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
 
-    int pipline_result[3] = {0,0,0};
+    int pipeline_result[3] = {0,0,0};
    
      ifstream file1(filename);
 
@@ -358,7 +358,8 @@ int main(int argc, char **argv) {
 //     Vehicle_Speed vehicleSpeed;  // Replace this with your actual instantiation
 //     // Assuming vehicleSpeed is initialized with the required data
 
-    RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipline_result);
+    RunPipeline(Vehicle_Speed.Data, Vehicle_Speed.timestamp, Vehicle_Speed.Data_Length, acceleration, pipeline_result);
+    
 
 
 //     // Now 'acc' vector contains acceleration values
@@ -372,7 +373,7 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < 3; i++)
     {
-        cout << "Pipline index " << i << "  =  " << pipline_result[i] << endl;
+        cout << "Pipline index " << i << "  =  " << pipeline_result[i] << endl;
     };
 
     for(int i = 0; i < 40; i++)
@@ -382,8 +383,7 @@ int main(int argc, char **argv) {
     //Now let's get the histogram for engine speed
     //bins will be 0-499.9999, 500-1000, 1000-1500, 1500-2000, 2000-2500, 2500-3000, 3000-3500, 3500-4000, 4000-4500, 4500-5000, 5000-5500, 5500-6000, 6000-6500, 6500-7000
     //therefoe the bin_size = 500
-  
-    
+   
     //Now let's get the histogram for vehicle speed
     
     int engine_speed_max_index = max[0];
