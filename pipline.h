@@ -38,14 +38,10 @@ public:
         if(i < Data_Length/VSS.vs_data_length)
         {
             VSS.Data_Length = Data_Length;
-            for(int j = 0; j < VSS.vs_data_length ; j++)
-            {
-                VSS.Data[j] = Data[100*i + j]; VSS.timestamp[j] = timestamp[100*i + j]; VSS.acceleration[j] = acceleration[100*i + j];
-
-
-            }
+            VSS.Data = (Data+100*i);
+            VSS.timestamp = (timestamp+100*i);
+            VSS.acceleration = (acceleration+100*i);
             i++;
-            return VSS;
         }
         else 
         {
