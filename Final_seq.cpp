@@ -324,24 +324,26 @@ int main(int argc, char **argv) {
     for(int i = 0; i < Vehicle_Speed.Data_Length/100; i++)
     {   float min = 0;
         float max = 0;
+        float acceleration_temp[100];
         for(int j = 0; j < 100; j++)
         {
-            min = findMin(acceleration,Vehicle_Speed.Data_Length);
-            max = findMax(acceleration,Vehicle_Speed.Data_Length);
-            if (max > (2.7+10))
-            {
-            pipeline_result[0] = pipeline_result[0]  + 1;
-            }
-            else if(min < (-5.4+10))
-            {
-            pipeline_result[1]  = pipeline_result[1]  + 1;
-            }
-            else{
-            pipeline_result[2]  = pipeline_result[2]  + 1;
-             }
-
+            acceleration_temp[j] = acceleration[(100*i)+j];
         }
-       
+        
+        min = findMin(acceleration_temp,100);
+        max = findMax(acceleration_temp,100);
+        if (max > (2.7+10))
+        {
+        pipeline_result[0] = pipeline_result[0]  + 1;
+        }
+        else if(min < (-5.4+10))
+        {
+        pipeline_result[1]  = pipeline_result[1]  + 1;
+        }
+        else
+        {
+        pipeline_result[2]  = pipeline_result[2]  + 1;
+        } 
     }
 
     CreateHistogram(acceleration, acceleration_h, acceleration_h_binsize, Vehicle_Speed.Data_Length);
