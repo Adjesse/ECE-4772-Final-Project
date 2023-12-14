@@ -57,15 +57,9 @@ disp(['Min Fuel Level Percentage: ' num2str(min_value_for_fuel_level)]);
 
 
 %Find Acceleration
-% Filter rows where Var2 is equal to 13
-selected_rows = data_table.Var2 == 13;
-
-% Extract values from Var1 corresponding to the selected rows
-time_speed = data_table.Var1(selected_rows);
-
+time_speed = data_table(id ==13,"Var1");
 dt = diff(time_speed); % Calculate time intervals
 dv = diff(speed_values); % Calculate speed differences
-dt = dt*3.6;
 acceleration = dv ./ dt; % Numerical differentiation to get acceleration
 
 % Find min and max for every 100 values
@@ -84,8 +78,7 @@ for i = 1:num_groups
 end
 
 
-AccHisto = histogram(acceleration,[-10:1:10]);
-AccHistoCounts = histcounts(acceleration,[-10:1:10]);
+histogram(acceleration,[-10:1:10])
 
 % Narrow down the vectors based on specified conditions
 min_acceleration_filtered = min_acceleration(min_acceleration < -5.4);
