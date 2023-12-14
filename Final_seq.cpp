@@ -344,7 +344,7 @@ int main(int argc, char **argv) {
         {
         pipeline_result[1]  = pipeline_result[1]  + 1;
         }
-        else
+        if((max < (2.7+10)) && (min > (-5.4+10)))
         {
         pipeline_result[2]  = pipeline_result[2]  + 1;
         } 
