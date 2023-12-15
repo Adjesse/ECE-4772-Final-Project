@@ -15,7 +15,8 @@ using namespace tbb;
 
 
 int main(int argc, char **argv) {
-    
+
+//--------------------------------Common Setup--------------------------------    
     int n = 305000;
     int n_multiplier;
 
@@ -195,10 +196,6 @@ int main(int argc, char **argv) {
   
     count = 0;
 
-    float *acceleration;
-    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
-
-    int pipeline_result[3] = {0,0,0};
    
      ifstream file1(filename);
 
@@ -207,9 +204,6 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-
-    
-
 
     while (file1 >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
         // Assuming your struct has a public array and you want to store each entry
@@ -279,7 +273,15 @@ int main(int argc, char **argv) {
     duplicateArray(Fuel_Percent, n_multiplier);
     duplicateArray(Distance_Since_Clear, n_multiplier);
     
+//--------------------------------End Common Setup----------------------------
 
+
+
+    
+    float *acceleration;
+    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
+
+    int pipeline_result[3] = {0,0,0};
     //variable setup and dynamic memory allocation for the min, max, and avg
     //Create 2-D array of data vectors 
     //int Data_set_lengths[5] = {Engine_Speed.Data_Length , Vehicle_Speed.Data_Length, ECT.Data_Length, Fuel_Percent.Data_Length, Distance_Since_Clear.Data_Length};

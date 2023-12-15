@@ -194,12 +194,8 @@ int main(int argc, char **argv) {
     if (Distance_Since_Clear.PID == NULL) {printf("error");}
     if (Distance_Since_Clear.Data == NULL) {printf("error");}
     
-//--------------------------------Common Setup--------------------------------
-    float *acceleration;
-    int *acceleration_h;
-    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
-    acceleration_h = (int *) calloc(20/1, sizeof(int));
-    int pipeline_result[3] = {0,0,0};
+
+
   
     count = 0;
    
@@ -210,9 +206,6 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-
-    
-
 
     while (file1 >> TEMP_DATA_Input.timestamp >> TEMP_DATA_Input.PID >> TEMP_DATA_Input.Data) {
         // Assuming your struct has a public array and you want to store each entry
@@ -281,8 +274,15 @@ int main(int argc, char **argv) {
     duplicateArray(Fuel_Percent, n_multiplier);
     duplicateArray(Distance_Since_Clear, n_multiplier);
 
+//--------------------------------End Common Setup----------------------------
 
 
+//--------------------------------TTB Setup-----------------------------------
+    float *acceleration;
+    int *acceleration_h;
+    acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
+    acceleration_h = (int *) calloc(20/1, sizeof(int));
+    int pipeline_result[3] = {0,0,0};
 
     // Now Engine_Speed contains your data
     gettimeofday (&start, NULL);
