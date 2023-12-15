@@ -35,16 +35,6 @@ try:
     function(20,cpp_program_path_seq ,["20"])
     function(50,cpp_program_path_seq ,["50"])
 
-    
-# #Test n mult 1-10
-#     for test in range(1,11):
-#         cpp_arguments_tbb = [str(test) , "1"]
-#         test_number = str(test)
-#         function(test_number,cpp_program_path_tbb,cpp_arguments_tbb)
-# #Test n mult 20 and 50
-#     function("11",cpp_program_path_tbb,['20','1'])
-#     function("12",cpp_program_path_tbb,['50','1'])
-
 #Test Partial Histogram 1-10
     loop = 1
     for nmult in range(1,13):

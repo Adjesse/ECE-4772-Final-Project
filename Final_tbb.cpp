@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     {
         nt = atoi(argv[2]);
         n_multiplier = atoi(argv[1]);  
-    }
+    }  
     
     FILE *file_o1;
     FILE *file_o2;

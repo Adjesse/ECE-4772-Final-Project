@@ -12,7 +12,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-
+//--------------------------------Common Setup--------------------------------
     int n = 305000; //Length of data file
     int n_multiplier;
 
@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
     if (Distance_Since_Clear.PID == NULL) {printf("error");}
     if (Distance_Since_Clear.Data == NULL) {printf("error");}
     
-
+//--------------------------------Common Setup--------------------------------
     float *acceleration;
     int *acceleration_h;
     acceleration = (float *) calloc(Vehicle_Speed.Data_Length, sizeof(float));
